@@ -1,6 +1,8 @@
 'use client';
+import { BRAND_COLOR } from '@/constants';
 import { useAuth } from '@/providers/auth-provider';
 import React, { useEffect, useState } from 'react';
+import { BeatLoader } from 'react-spinners';
 interface PrivateRouteProps {
   children: React.ReactNode;
 }
@@ -27,7 +29,20 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
   }, [isError]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-svh w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-2">
+          <BeatLoader color={BRAND_COLOR} size={20} />
+          <p className="text-center text-sm">
+            <span className="font-medium">Please wait a moment...</span>
+            <br />
+            <span className="text-muted-foreground">
+              we are checking your credentials.
+            </span>
+          </p>
+        </div>
+      </div>
+    );
   }
   if (!isAuthenticated) {
     return null;

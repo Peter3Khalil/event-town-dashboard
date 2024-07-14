@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": false,
   "scripts": {
-    "dev": "set NODE_ENV=dev && next dev -p 7000",
+    "dev": "set NODE_ENV=dev && next dev -p 8080",
     "build": "set NODE_ENV=prod && next build",
     "start": "set NODE_ENV=prod && next start -p 7000",
     "lint:fix": "eslint src --fix",
@@ -41,6 +41,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.52.0",
     "react-query": "^3.39.3",
+    "react-spinners": "^0.14.1",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"
