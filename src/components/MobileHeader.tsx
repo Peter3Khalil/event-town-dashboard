@@ -1,7 +1,7 @@
 'use client';
 
 import { MenuIcon } from '@/components/shared/Icons';
-import ThemeChanger from '@/components/ThemeChanger';
+import ProfileMenu from '@/components/shared/ProfileMenu';
 import {
   Sheet,
   SheetContent,
@@ -34,7 +34,7 @@ const MobileHeader = () => {
             {breadcrumbPage}
           </span>
         </div>
-        <ThemeChanger />
+        <ProfileMenu />
       </header>
       <SheetContent side={'left'}>
         <SheetHeader className="items-start text-start">

@@ -1,21 +1,14 @@
 'use client';
 
-import { MoonIcon, SunIcon } from '@/components/shared/Icons';
+import { Switch } from '@/components/ui/switch';
+import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
-import React, { FC, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import React, { FC, useEffect, useId } from 'react';
 
-interface ThemeChangerProps
-  extends React.ComponentProps<typeof DropdownMenuTrigger> {}
-
-const ThemeChanger: FC<ThemeChangerProps> = (props) => {
+type ThemeChangerProps = React.HTMLAttributes<HTMLDivElement>;
+const ThemeChanger: FC<ThemeChangerProps> = ({ className, ...props }) => {
   const { setTheme, theme } = useTheme();
+  const id = useId();
   useEffect(() => {
     if (theme) localStorage.setItem('theme', theme);
     if (localStorage.getItem('theme')) {
@@ -24,32 +17,17 @@ const ThemeChanger: FC<ThemeChangerProps> = (props) => {
   }, [setTheme, theme]);
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger {...props} asChild>
-        <Button variant="outline" size="icon">
-          <SunIcon
-            size={20}
-            className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
-          />
-          <MoonIcon
-            size={20}
-            className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
-          />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="mx-2" align="end">
-        <DropdownMenuItem onClick={() => setTheme('light')}>
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')}>
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('system')}>
-          System
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className={cn('flex items-center gap-2', className)} {...props}>
+      <label htmlFor={id}>Dark Mode</label>
+      <Switch
+        checked={theme === 'dark'}
+        onCheckedChange={(checked) => {
+          setTheme(checked ? 'dark' : 'light');
+        }}
+        className="h-[15px] w-[30px]"
+        id={id}
+      />
+    </div>
   );
 };
 

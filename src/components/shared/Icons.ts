@@ -22,4 +22,5 @@ export {
   LayoutPanelLeft as CategoryIcon,
   Blocks as AddCategoryIcon,
   Menu as MenuIcon,
+  LogOut as LogOutIcon,
 } from 'lucide-react';

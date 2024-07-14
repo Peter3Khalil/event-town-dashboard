@@ -1,8 +1,9 @@
 'use client';
-import ThemeChanger from '@/components/ThemeChanger';
+import ProfileMenu from '@/components/shared/ProfileMenu';
 import { NAVIGATION_ITEMS } from '@/constants';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/providers/auth-provider';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FC, useCallback, useEffect, useState } from 'react';
@@ -14,23 +15,28 @@ const SIDEBAR_ICON_SIZE = 20;
 interface SidebarProps extends React.ComponentProps<'aside'> {}
 const Sidebar: FC<SidebarProps> = ({ className, ...props }) => {
   const [isOpened, setIsOpened] = useState(false);
+  const { user } = useAuth();
   const pathname = usePathname();
   const { isMatched: isTablet } = useMediaQuery({
     minWidth: 640,
     maxWidth: 768,
   });
+
   const toggleSidebar = useCallback(() => {
     if (isTablet) return;
     setIsOpened((prev) => !prev);
   }, [isTablet]);
+
   const isActive = (href: string) => pathname.includes(href);
+
   useEffect(() => {
     if (isTablet) setIsOpened(false);
   }, [isTablet]);
+
   return (
     <aside
       className={cn(
-        'relative hidden h-full w-52 min-w-fit max-w-52 flex-col border-r duration-300 sm:flex',
+        'relative hidden h-full w-52 min-w-16 max-w-52 flex-col border-r duration-300 sm:flex',
         className,
         {
           'w-12': !isOpened,
@@ -93,8 +99,35 @@ const Sidebar: FC<SidebarProps> = ({ className, ...props }) => {
           </button>
         </MyTooltip>
       )}
-      <div className="p-3">
-        <ThemeChanger />
+      <div className="flex w-full flex-col gap-4 p-3">
+        <div
+          className={cn(
+            'flex w-full items-center gap-2 overflow-hidden text-ellipsis text-xs',
+            {
+              'gap-0': !isOpened,
+            },
+          )}
+        >
+          <ProfileMenu />
+          <div
+            className={cn(
+              'flex w-full flex-col overflow-hidden text-ellipsis',
+              {
+                hidden: !isOpened,
+              },
+            )}
+          >
+            <h4
+              className="overflow-hidden text-ellipsis font-bold"
+              title={user.name}
+            >
+              {user.name}
+            </h4>
+            <p className="overflow-hidden text-ellipsis" title={user.email}>
+              {user.email}
+            </p>
+          </div>
+        </div>
       </div>
     </aside>
   );
