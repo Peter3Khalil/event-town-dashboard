@@ -1,6 +1,6 @@
 'use client';
-import Header from '@/components/Header';
 import { Page, PageLayout, PageSection } from '@/components/layouts/PageLayout';
+import MobileHeader from '@/components/MobileHeader';
 import PrivateRoute from '@/components/PrivateRoute';
 import CustomBreadcrumb from '@/components/shared/CustomBreadcrumb';
 import Sidebar from '@/components/Sidebar';
@@ -31,7 +31,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <Sidebar className="shrink-0" />
             <main className="h-full w-full overflow-auto pb-4 sm:px-4 sm:py-4 sm:pb-2">
               <PageLayout className="gap-2 pt-0 sm:gap-4">
-                <Header />
+                <MobileHeader />
                 <Page className="h-[calc(100%-3.5rem)] px-6 sm:h-full">
                   <PageSection>
                     <BreadcrumbWrapper />

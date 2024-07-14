@@ -1,6 +1,6 @@
 import '@/app/globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import { APP_FONT } from '@/constants';
+import { APP_FONT, BRAND_COLOR } from '@/constants';
 import MyQueryClientProvider from '@/providers/query-client-provider';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { Metadata } from 'next';
@@ -32,7 +32,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <MyQueryClientProvider>
-            <NextTopLoader showSpinner={false} color="#f97316" />
+            <NextTopLoader showSpinner={false} color={BRAND_COLOR} />
             {children}
             <Toaster />
           </MyQueryClientProvider>

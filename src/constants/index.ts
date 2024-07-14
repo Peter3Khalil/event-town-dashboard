@@ -8,6 +8,8 @@ import {
 import { LucideIcon } from 'lucide-react';
 import { GetAllQueryParams } from '@/types/global.types';
 
+export const BRAND_COLOR = '#f97316';
+
 export const APP_FONT = Rubik({
   subsets: ['latin'],
   weight: ['300', '400', '500', '700'],
