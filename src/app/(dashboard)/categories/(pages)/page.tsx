@@ -1,4 +1,5 @@
 'use client';
+import CreateCategoryDialog from '@/components/category/CreateCategoryDialog';
 import {
   PageContent,
   PageDescription,
@@ -6,8 +7,6 @@ import {
   PageTitle,
 } from '@/components/layouts/PageLayout';
 import ColumnsVisibilityDropMenu from '@/components/shared/ColumnsVisibilityDropMenu';
-import CreateButton from '@/components/shared/CreateButton';
-import { AddCategoryIcon } from '@/components/shared/Icons';
 import PaginationControl from '@/components/shared/PaginationControl';
 import Search from '@/components/shared/Search';
 import TableViewer from '@/components/shared/TableViewer';
@@ -63,9 +62,8 @@ const Categories = () => {
           </div>
           <PageDescription>Manage all categories in one place</PageDescription>
         </div>
-        <CreateButton href="/categories/create" icon={AddCategoryIcon}>
-          Create Category
-        </CreateButton>
+
+        <CreateCategoryDialog />
       </PageHeader>
       <div className="flex w-full items-center justify-between gap-2 pr-2">
         <Search setParams={setParams} />

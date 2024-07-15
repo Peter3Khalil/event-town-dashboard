@@ -15,3 +15,15 @@ export type GetAllResponse<T> = {
   paginationResult: PaginationResult;
   data: T[];
 };
+
+export type ErrorResponse = {
+  errors: Error[];
+};
+
+export type Error = {
+  type: string;
+  value: string;
+  msg: string;
+  path: string;
+  location: string;
+};

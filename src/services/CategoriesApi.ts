@@ -1,5 +1,5 @@
 import client from '@/lib/client';
-import { GetAllCategoriesResponse } from '@/types/categories.types';
+import { Category, GetAllCategoriesResponse } from '@/types/categories.types';
 import { GetAllQueryParams } from '@/types/global.types';
 import { AxiosRequestConfig } from 'axios';
 
@@ -27,6 +27,10 @@ class CategoriesApi {
 
   public delete(id: string, config?: AxiosRequestConfig) {
     return client.delete(`/categories/${id}`, config);
+  }
+
+  public create(category: { title: string }, config?: AxiosRequestConfig) {
+    return client.post<Category>('/categories', category, config);
   }
 }
 
