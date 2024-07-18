@@ -20,7 +20,7 @@ import { useMutation, useQueryClient } from 'react-query';
 const CreateCategoryDialog = () => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState('New Category');
+  const [name, setName] = useState('');
   const [error, setError] = useState('');
   const { mutate, isLoading } = useMutation(CategoriesApi.create, {
     onSuccess() {
@@ -103,6 +103,7 @@ const Form: FC<FormProps> = ({ name, error, handleOnChange }) => {
           defaultValue="New Category"
           onChange={handleOnChange}
           value={name}
+          placeholder="Enter category name"
         />
         {error && <span className="text-xs text-destructive">{error}</span>}
       </div>
