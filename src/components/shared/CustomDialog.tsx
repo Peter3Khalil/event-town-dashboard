@@ -17,13 +17,11 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import useMediaQuery from '@/hooks/useMediaQuery';
-import React, { ComponentType, FC } from 'react';
+import React, { ComponentType, FC, PropsWithChildren } from 'react';
 
-type ResponsiveComponentProps<T> = T & {
-  children?: React.ReactNode;
-};
+type ResponsiveComponentProps<T> = PropsWithChildren<T>;
 
-const withResponsiveComponent = <T extends object>({
+const withResponsiveComponent = <T,>({
   DesktopComponent,
   MobileComponent,
 }: {
@@ -53,8 +51,8 @@ const CustomDialogTrigger = withResponsiveComponent<
 const CustomDialogContent = withResponsiveComponent<
   React.ComponentProps<typeof DialogContent> &
     React.ComponentProps<typeof DrawerContent>
-  //@ts-expect-error - DrawerContent does not have a ref
->(DialogContent, DrawerContent);
+  //@ts-expect-error DialogContent and DrawerContent have different props
+>({ DesktopComponent: DialogContent, MobileComponent: DrawerContent });
 
 const CustomDialogHeader = withResponsiveComponent<
   React.ComponentProps<typeof DialogHeader> &
