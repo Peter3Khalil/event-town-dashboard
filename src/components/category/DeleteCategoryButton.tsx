@@ -28,6 +28,7 @@ const DeleteCategoryButton: FC<DeleteCategoryButtonProps> = ({ category }) => {
         size={'icon'}
         disabled={isLoading}
         onClick={handleDelete}
+        className="text-destructive hover:text-destructive"
       >
         <TrashIcon className="size-5" />
       </Button>
