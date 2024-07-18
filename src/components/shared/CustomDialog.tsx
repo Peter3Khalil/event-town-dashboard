@@ -36,6 +36,7 @@ const withResponsiveComponent = <T,>({
     const Component = isDesktop ? DesktopComponent : MobileComponent;
     return <Component {...(props as T)}>{children}</Component>;
   };
+
   return ResponsiveComponent;
 };
 

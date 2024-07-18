@@ -14,6 +14,7 @@ interface SearchProps<T extends GetAllQueryParams>
   extends React.ComponentProps<typeof Input> {
   setParams: Dispatch<SetStateAction<T>>;
 }
+
 const Search = <T extends GetAllQueryParams>({
   className,
   setParams,

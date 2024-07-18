@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from 'react-query';
 interface AcceptButtonProps extends React.ComponentProps<typeof Button> {
   event: Event;
 }
+
 const AcceptButton: FC<AcceptButtonProps> = ({ event, ...props }) => {
   const queryClient = useQueryClient();
   const { mutate, isLoading } = useMutation(EventsApi.accept, {

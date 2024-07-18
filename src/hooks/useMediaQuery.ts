@@ -26,9 +26,11 @@ const useMediaQuery = ({
     const media = window.matchMedia(
       `${minWidth ? `(min-width: ${minWidth}px)` : ''} ${minWidth && maxWidth ? 'and' : ''} ${maxWidth ? `(max-width: ${maxWidth}px)` : ''}`,
     );
+
     if (media.matches) {
       setIsMatched(true);
     }
+
     const listener = () => {
       if (!media.matches) {
         setIsMatched(false);
@@ -36,6 +38,7 @@ const useMediaQuery = ({
         setIsMatched(true);
       }
     };
+
     media.addEventListener('change', listener);
     return () => media.removeEventListener('change', listener);
   }, [maxWidth, minWidth]);

@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useEffect } from 'react';
+
 const NotFound = () => {
   useEffect(() => {
     document.title = 'Not found';

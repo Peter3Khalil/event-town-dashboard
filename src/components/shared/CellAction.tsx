@@ -28,6 +28,7 @@ interface CellActionProps<TData extends { _id: string }>
   invalidateKey: string;
   updateHref: string;
 }
+
 const CellAction = <TData extends { _id: string }>({
   model,
   deleteFunction,

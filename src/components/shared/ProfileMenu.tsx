@@ -18,9 +18,11 @@ type ProfileMenuProps = React.ComponentProps<typeof DropdownMenuContent>;
 const ProfileMenu: FC<ProfileMenuProps> = ({ className, ...props }) => {
   const { user } = useAuth();
   const name = user?.name;
+
   const handleLogout = () => {
     window.location.href = '/login';
   };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>

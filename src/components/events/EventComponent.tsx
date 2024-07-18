@@ -9,6 +9,7 @@ import React, { FC } from 'react';
 interface EventComponentProps extends React.HTMLAttributes<HTMLDivElement> {
   event: Event;
 }
+
 const EventComponent: FC<EventComponentProps> = ({
   event,
   className,

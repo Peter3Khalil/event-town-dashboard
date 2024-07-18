@@ -6,6 +6,7 @@ interface SelectRowCheckboxProps<TData>
   extends React.ComponentProps<typeof Checkbox> {
   row: Row<TData>;
 }
+
 const SelectRowCheckbox = <TData,>({
   row,
   ...props

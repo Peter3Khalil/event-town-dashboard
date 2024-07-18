@@ -11,6 +11,7 @@ interface UseRefetchProps {
   refresh: () => void;
   cancelQuery: () => void;
 }
+
 const useRefetch = ({
   isFetching,
   isLoading,

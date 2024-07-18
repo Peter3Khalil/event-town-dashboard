@@ -12,6 +12,7 @@ interface MyTooltipProps
   children: React.ReactNode;
   content: React.ReactNode;
 }
+
 const MyTooltip: FC<MyTooltipProps> = ({
   children,
   delayDuration = 300,

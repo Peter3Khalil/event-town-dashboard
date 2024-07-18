@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/select';
 
 interface SelectLimitProps extends React.ComponentProps<typeof Select> {}
+
 const SelectLimit: FC<SelectLimitProps> = ({ ...props }) => {
   return (
     <Select defaultValue="10" {...props}>

@@ -42,12 +42,15 @@ const CreateCategoryDialog = () => {
     const trimmedName = name.trim();
     return trimmedName.length > 2 && trimmedName.length <= 30;
   };
+
   const handleSubmit = () => {
     mutate({ title: name });
   };
+
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value.slice(0, 30));
   };
+
   useEffect(() => {
     setIsValid(validateName(name));
     setError('');
@@ -87,6 +90,7 @@ type FormProps = {
   // eslint-disable-next-line no-unused-vars
   handleOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
+
 const Form: FC<FormProps> = ({ name, error, handleOnChange }) => {
   return (
     <div className="flex w-full items-center gap-4 p-4">

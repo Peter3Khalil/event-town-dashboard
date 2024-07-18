@@ -9,6 +9,7 @@ import React, { FC } from 'react';
 interface UserComponentProps extends React.HTMLAttributes<HTMLDivElement> {
   user: User;
 }
+
 const UserComponent: FC<UserComponentProps> = ({
   user,
   className,

@@ -89,4 +89,5 @@ const Wrapper = () => {
     </CategoriesTableProvider>
   );
 };
+
 export default Wrapper;

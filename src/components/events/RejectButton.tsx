@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from 'react-query';
 interface RejectButtonProps extends React.ComponentProps<typeof Button> {
   event: Event;
 }
+
 const RejectButton: FC<RejectButtonProps> = ({ event, ...props }) => {
   const queryClient = useQueryClient();
   //TODO: Implement Optimistic Update

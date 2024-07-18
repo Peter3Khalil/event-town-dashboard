@@ -138,6 +138,7 @@ const CommandShortcut = ({
     />
   );
 };
+
 CommandShortcut.displayName = 'CommandShortcut';
 
 export {

@@ -7,6 +7,7 @@ type SpecificImageProps = Required<
 interface MyImageProps
   extends React.HTMLAttributes<HTMLDivElement>,
     SpecificImageProps {}
+
 const MyImage: FC<MyImageProps> = (props) => {
   const { className, alt, src, width, height, ...rest } = props;
   return (

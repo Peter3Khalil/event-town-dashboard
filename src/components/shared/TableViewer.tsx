@@ -7,6 +7,7 @@ interface TableViewerProps<TData> {
   isFetching: boolean;
   isLoading: boolean;
 }
+
 const TableViewer = <TData,>({
   isFetching,
   isLoading,

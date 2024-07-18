@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: 'Users',
   description: 'Users',
 };
+
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return <UsersProvider>{children}</UsersProvider>;
 };

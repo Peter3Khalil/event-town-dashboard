@@ -14,9 +14,11 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
   useEffect(() => {
     if (isSuccess) {
       const isAdmin = user.role === 'admin';
+
       if (!isAdmin) {
         window.location.href = '/login';
       }
+
       setIsAuthenticated(isAdmin);
     }
   }, [isSuccess, user.role]);
@@ -44,6 +46,7 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
       </div>
     );
   }
+
   if (!isAuthenticated) {
     return null;
   }

@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: 'Categories',
   description: 'Categories',
 };
+
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return <CategoriesProvider>{children}</CategoriesProvider>;
 };

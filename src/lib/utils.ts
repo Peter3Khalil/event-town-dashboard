@@ -27,6 +27,7 @@ export const toastError = (
       description: error.response?.data.message,
     });
   }
+
   toast({
     title: 'Error',
     description: 'An error occurred while rejecting the event',

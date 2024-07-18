@@ -13,6 +13,7 @@ import MyTooltip from './shared/MyTooltip';
 const SIDEBAR_ICON_SIZE = 20;
 
 interface SidebarProps extends React.ComponentProps<'aside'> {}
+
 const Sidebar: FC<SidebarProps> = ({ className, ...props }) => {
   const [isOpened, setIsOpened] = useState(false);
   const { user } = useAuth();

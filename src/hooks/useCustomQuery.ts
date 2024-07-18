@@ -13,6 +13,7 @@ export type UseCustomQueryResult<TData, TError> = UseQueryResult<
   isCancelled: boolean;
   cancelQuery: () => void;
 };
+
 const useCustomQuery = <TData = unknown, TError = unknown>(
   queryKey: string | unknown[],
   queryFn: QueryFunction<TData>,

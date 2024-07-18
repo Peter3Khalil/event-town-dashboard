@@ -6,11 +6,13 @@ import { useTheme } from 'next-themes';
 import React, { FC, useEffect, useId } from 'react';
 
 type ThemeChangerProps = React.HTMLAttributes<HTMLDivElement>;
+
 const ThemeChanger: FC<ThemeChangerProps> = ({ className, ...props }) => {
   const { setTheme, theme } = useTheme();
   const id = useId();
   useEffect(() => {
     if (theme) localStorage.setItem('theme', theme);
+
     if (localStorage.getItem('theme')) {
       setTheme(localStorage.getItem('theme') as string);
     }

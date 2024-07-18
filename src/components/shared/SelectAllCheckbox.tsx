@@ -6,6 +6,7 @@ interface SelectAllCheckboxProps<TData>
   extends React.ComponentProps<typeof Checkbox> {
   table: Table<TData>;
 }
+
 const SelectAllCheckbox = <TData,>({
   table,
 }: SelectAllCheckboxProps<TData>) => {

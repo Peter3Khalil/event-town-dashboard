@@ -48,6 +48,7 @@ export const PageHeader: FC<React.HTMLAttributes<HTMLDivElement>> = ({
     </section>
   );
 };
+
 export const PageSection: FC<React.HTMLAttributes<HTMLDivElement>> = ({
   children,
   className,

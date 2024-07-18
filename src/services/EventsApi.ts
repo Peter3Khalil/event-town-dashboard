@@ -15,6 +15,7 @@ class EventsApi {
     if (!EventsApi.instance) {
       EventsApi.instance = new EventsApi();
     }
+
     return EventsApi.instance;
   }
 

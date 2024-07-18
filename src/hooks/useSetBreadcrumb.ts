@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 interface UseSetBreadcrumbProps {
   breadcrumbPath?: string;
 }
+
 const useSetBreadcrumb = ({ breadcrumbPath = '/' }: UseSetBreadcrumbProps) => {
   const { setBreadcrumbPage, setBreadcrumbItems } = useBreadcrumb();
   useEffect(() => {

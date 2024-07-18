@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: 'Events',
   description: 'Events',
 };
+
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return <EventsProvider>{children}</EventsProvider>;
 };

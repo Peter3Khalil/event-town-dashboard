@@ -14,6 +14,7 @@ interface ColumnsVisibilityDropMenuProps<TData>
   extends React.ComponentProps<typeof DropdownMenuTrigger> {
   table: Table<TData>;
 }
+
 const ColumnsVisibilityDropMenu = <TData,>({
   table,
   ...props
