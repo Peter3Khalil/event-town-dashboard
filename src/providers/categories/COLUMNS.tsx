@@ -1,6 +1,6 @@
-import CellAction from '@/components/shared/CellAction';
+import DeleteCategoryButton from '@/components/category/DeleteCategoryButton';
+import EditCategoryDialog from '@/components/category/EditCategoryDialog';
 import { Capitalize, formatDateTime } from '@/lib/utils';
-import CategoriesApi from '@/services/CategoriesApi';
 import { Category } from '@/types/categories.types';
 import { ColumnDef } from '@tanstack/react-table';
 
@@ -30,15 +30,14 @@ export const COLUMNS: ColumnDef<Category>[] = [
     cell: ({ row }) => formatDateTime(row.original.updatedAt),
   },
   {
-    id: 'actions',
+    id: 'Actions',
+    accessorKey: 'actions',
+    header: 'Actions',
     cell: ({ row }) => (
-      <CellAction
-        deleteFunction={CategoriesApi.delete}
-        invalidateKey="categories"
-        updateHref={`/categories/${row.original._id}`}
-        model={row.original}
-      />
+      <div className="flex items-center">
+        <EditCategoryDialog category={row.original} />
+        <DeleteCategoryButton category={row.original} />
+      </div>
     ),
-    enableHiding: false,
   },
 ];

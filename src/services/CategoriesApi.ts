@@ -12,6 +12,7 @@ class CategoriesApi {
     if (!CategoriesApi.instance) {
       CategoriesApi.instance = new CategoriesApi();
     }
+
     return CategoriesApi.instance;
   }
 
@@ -31,6 +32,13 @@ class CategoriesApi {
 
   public create(category: { title: string }, config?: AxiosRequestConfig) {
     return client.post<Category>('/categories', category, config);
+  }
+  public update(
+    category: { title: string; id: string },
+    config?: AxiosRequestConfig,
+  ) {
+    const { id, ...rest } = category;
+    return client.put<{ data: Category }>(`/categories/${id}`, rest, config);
   }
 }
 
