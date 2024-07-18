@@ -1,26 +1,16 @@
+import {
+  CustomDialog,
+  CustomDialogContent,
+  CustomDialogDescription,
+  CustomDialogFooter,
+  CustomDialogHeader,
+  CustomDialogTitle,
+  CustomDialogTrigger,
+} from '@/components/shared/CustomDialog';
 import { AddCategoryIcon } from '@/components/shared/Icons';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import useMediaQuery from '@/hooks/useMediaQuery';
 import CategoriesApi from '@/services/CategoriesApi';
 import { ErrorResponse } from '@/types/global.types';
 import { AxiosError } from 'axios';
@@ -63,62 +53,31 @@ const CreateCategoryDialog = () => {
     setError('');
   }, [name]);
 
-  const { isMatched: isDesktop } = useMediaQuery({ minWidth: 768 });
-  if (isDesktop) {
-    return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button>
-            <div className="flex items-center gap-2 text-sm md:text-xs">
-              <AddCategoryIcon size={20} />
-              <span className="hidden capitalize sm:block">
-                Create Category
-              </span>
-            </div>
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>New Category</DialogTitle>
-            <DialogDescription>
-              Enter name of the category you want to create.
-            </DialogDescription>
-          </DialogHeader>
-          <Form name={name} error={error} handleOnChange={handleOnChange} />
-          <DialogFooter>
-            <Button onClick={handleSubmit} disabled={isButtonDisabled}>
-              {isLoading ? 'Creating...' : 'Create'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    );
-  }
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
+    <CustomDialog open={open} onOpenChange={setOpen}>
+      <CustomDialogTrigger asChild>
         <Button>
           <div className="flex items-center gap-2 text-sm md:text-xs">
             <AddCategoryIcon size={20} />
             <span className="hidden capitalize sm:block">Create Category</span>
           </div>
         </Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader className="text-left">
-          <DrawerTitle>New Category</DrawerTitle>
-          <DrawerDescription>
+      </CustomDialogTrigger>
+      <CustomDialogContent className="sm:max-w-[425px]">
+        <CustomDialogHeader>
+          <CustomDialogTitle>New Category</CustomDialogTitle>
+          <CustomDialogDescription>
             Enter name of the category you want to create.
-          </DrawerDescription>
-        </DrawerHeader>
+          </CustomDialogDescription>
+        </CustomDialogHeader>
         <Form name={name} error={error} handleOnChange={handleOnChange} />
-        <DrawerFooter className="pt-2">
+        <CustomDialogFooter>
           <Button onClick={handleSubmit} disabled={isButtonDisabled}>
             {isLoading ? 'Creating...' : 'Create'}
           </Button>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+        </CustomDialogFooter>
+      </CustomDialogContent>
+    </CustomDialog>
   );
 };
 
