@@ -7,6 +7,7 @@ import {
   CustomDialogTrigger,
 } from '@/components/shared/CustomDialog';
 import { EditIcon } from '@/components/shared/Icons';
+import MyTooltip from '@/components/shared/MyTooltip';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -78,10 +79,12 @@ const EditCategoryDialog: FC<EditCategoryDialogProps> = ({ category }) => {
 
   return (
     <CustomDialog open={open} onOpenChange={setOpen}>
-      <CustomDialogTrigger asChild>
-        <Button variant={'ghost'} size={'icon'}>
-          <EditIcon className="size-5" />
-        </Button>
+      <CustomDialogTrigger>
+        <MyTooltip content="Edit" side="top" delayDuration={500}>
+          <Button variant={'ghost'} size={'icon'}>
+            <EditIcon className="size-5" />
+          </Button>
+        </MyTooltip>
       </CustomDialogTrigger>
       <CustomDialogContent className="sm:max-w-[425px]">
         <CustomDialogHeader>

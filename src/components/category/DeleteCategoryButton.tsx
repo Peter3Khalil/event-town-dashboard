@@ -4,6 +4,7 @@ import { Category } from '@/types/categories.types';
 import { TrashIcon } from '@/components/shared/Icons';
 import React, { FC } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
+import MyTooltip from '@/components/shared/MyTooltip';
 
 type DeleteCategoryButtonProps = {
   category: Category;
@@ -23,15 +24,17 @@ const DeleteCategoryButton: FC<DeleteCategoryButtonProps> = ({ category }) => {
 
   return (
     <div>
-      <Button
-        variant={'ghost'}
-        size={'icon'}
-        disabled={isLoading}
-        onClick={handleDelete}
-        className="text-destructive hover:text-destructive"
-      >
-        <TrashIcon className="size-5" />
-      </Button>
+      <MyTooltip content="Delete" side="top" delayDuration={500}>
+        <Button
+          variant={'ghost'}
+          size={'icon'}
+          disabled={isLoading}
+          onClick={handleDelete}
+          className="text-destructive hover:text-destructive"
+        >
+          <TrashIcon className="size-5" />
+        </Button>
+      </MyTooltip>
     </div>
   );
 };
