@@ -1,6 +1,11 @@
 import client from '@/lib/client';
 import { GetAllQueryParams } from '@/types/global.types';
-import { GetAllUsersResponse, LoginResponse } from '@/types/users.types';
+import {
+  GetAllUsersResponse,
+  LoginResponse,
+  MutateUser,
+  User,
+} from '@/types/users.types';
 import { AxiosRequestConfig } from 'axios';
 
 class UsersApi {
@@ -12,6 +17,7 @@ class UsersApi {
     if (!UsersApi.instance) {
       UsersApi.instance = new UsersApi();
     }
+
     return UsersApi.instance;
   }
 
@@ -26,12 +32,52 @@ class UsersApi {
   }
 
   public getOne(id: string, config?: AxiosRequestConfig) {
-    return client.get(`/users/${id}`, config);
+    return client.get<{ data: Omit<User, 'token'> }>(`/users/${id}`, config);
   }
 
   public getMe(config?: AxiosRequestConfig) {
     return client.get<Omit<LoginResponse, 'token'>>('/users/getMe', config);
   }
+
+  public create(user: MutateUser, config?: AxiosRequestConfig) {
+    return client.post<User>('/users', user, config);
+  }
+
+  public updateUser(
+    id: string,
+    user: Partial<User>,
+    config?: AxiosRequestConfig,
+  ) {
+    return client.put<User>(`/users/${id}`, user, config);
+  }
+
+  public updateMyData(user: Partial<MutateUser>, config?: AxiosRequestConfig) {
+    return client.put<User>(`/users/changeMyData`, user, config);
+  }
+
+  public changeUserPassword(
+    id: string,
+    data: {
+      currentPassword: string;
+      password: string;
+      confirmPassword: string;
+    },
+    config?: AxiosRequestConfig,
+  ) {
+    return client.put<User>(`/users/changePassword/${id}`, data, config);
+  }
+
+  public changeMyPassword(
+    data: {
+      currentPassword: string;
+      password: string;
+      confirmPassword: string;
+    },
+    config?: AxiosRequestConfig,
+  ) {
+    return client.put<User>(`/users/changeMyPassword`, data, config);
+  }
+
   public delete(id: string, config?: AxiosRequestConfig) {
     return client.delete(`/users/${id}`, config);
   }
