@@ -6,6 +6,8 @@ import {
   PageHeader,
   PageTitle,
 } from '@/components/layouts/PageLayout';
+import { AlertIcon } from '@/components/shared/Icons';
+import MyTooltip from '@/components/shared/MyTooltip';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -110,10 +112,22 @@ const CreateUser = () => {
     <PageContent>
       <PageHeader>
         <div>
-          <div className="flex w-fit flex-col sm:flex-row sm:items-center sm:gap-2">
+          <div className="flex items-center gap-2">
             <PageTitle>Create User</PageTitle>
+            {Object.keys(errors).length > 0 && (
+              <MyTooltip
+                className="bg-destructive"
+                content={
+                  <span className="text-xs text-destructive-foreground">
+                    There are validation errors
+                  </span>
+                }
+              >
+                <AlertIcon size={20} className="text-destructive" />
+              </MyTooltip>
+            )}
           </div>
-          <PageDescription>Manage all users in one place</PageDescription>
+          <PageDescription>Add new user to your system</PageDescription>
         </div>
         <Button
           className="mt-6"

@@ -14,6 +14,6 @@
   "[shellscript]": {
     "editor.defaultFormatter": "shakram02.bash-beautify"
   },
-  "cSpell.words": ["navigations", "toploader"],
+  "cSpell.words": ["Hoverable", "navigations", "toploader"],
   "typescript.preferences.importModuleSpecifier": "non-relative"
 }
