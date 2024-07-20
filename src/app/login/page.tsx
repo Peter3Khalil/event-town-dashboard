@@ -1,6 +1,6 @@
 'use client';
 
-import { FORM_SCHEMA, FORM_FIELDS } from '@/app/login/constants/FORM_FIELDS';
+import { FORM_FIELDS, FORM_SCHEMA } from '@/app/login/constants/FORM_FIELDS';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -19,8 +19,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import UsersApi from '@/services/UsersApi';
+import { ResponseError } from '@/types/global.types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { z } from 'zod';
@@ -34,15 +36,24 @@ function Login() {
     },
     mode: 'onChange',
   });
+  const [serverError, setServerError] = useState<string | null>(null);
   const {
     handleSubmit,
     formState: { isValid },
   } = form;
 
-  const { mutate, isLoading, isError } = useMutation(UsersApi.login, {
+  const { mutate, isLoading } = useMutation(UsersApi.login, {
     onSuccess(data) {
       localStorage.setItem('token', data.data.token);
       window.location.href = '/dashboard';
+      setServerError(null);
+    },
+    onError(err) {
+      const error = err as AxiosError<ResponseError>;
+
+      if (error.response?.data && error.response?.data.message) {
+        setServerError(error.response.data.message);
+      }
     },
   });
 
@@ -61,9 +72,9 @@ function Login() {
         <CardDescription>
           Enter your email below to login to your account.
         </CardDescription>
-        {isError && (
+        {serverError && (
           <CardDescription className="text-destructive">
-            Invalid Email or password
+            {serverError}
           </CardDescription>
         )}
       </CardHeader>
