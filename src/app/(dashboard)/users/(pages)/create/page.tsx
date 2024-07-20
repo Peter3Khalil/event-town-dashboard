@@ -155,7 +155,6 @@ const CreateUser = () => {
                   )}
                   className="w-full focus-visible:border-primary focus-visible:ring-transparent focus-visible:ring-offset-0"
                 />
-                {}
                 {errors[
                   field.name as unknown as keyof z.infer<typeof FORM_SCHEMA>
                 ] && (
@@ -184,7 +183,7 @@ const CreateUser = () => {
                       {...field}
                       onValueChange={(value) => field.onChange(value)}
                     >
-                      <SelectTrigger className="w-[180px]">
+                      <SelectTrigger className="w-[180px] focus:ring-0 focus:ring-transparent focus:ring-offset-0">
                         <SelectValue placeholder="Select Role" />
                       </SelectTrigger>
                       <SelectContent>
@@ -228,7 +227,7 @@ const CreateUser = () => {
             </div>
             <div className="flex flex-col gap-1">
               <Label>Interests</Label>
-              <Separator />
+              <Separator className="h-[0.5px]" />
               {isLoadingCategories ? (
                 <p>Loading...</p>
               ) : (
