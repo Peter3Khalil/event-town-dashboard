@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import CategoriesApi from '@/services/CategoriesApi';
-import { ErrorResponse } from '@/types/global.types';
+import { ValidationError } from '@/types/global.types';
 import { AxiosError } from 'axios';
 import { FC, useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
@@ -30,7 +30,7 @@ const CreateCategoryDialog = () => {
       setError('');
     },
     onError(error) {
-      const err = error as AxiosError<ErrorResponse>;
+      const err = error as AxiosError<ValidationError>;
       setError(err.response?.data.errors[0].msg ?? 'Something went wrong');
     },
   });

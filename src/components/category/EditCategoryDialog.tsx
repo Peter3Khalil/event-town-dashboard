@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import CategoriesApi from '@/services/CategoriesApi';
 import { Category } from '@/types/categories.types';
-import { ErrorResponse } from '@/types/global.types';
+import { ValidationError } from '@/types/global.types';
 import { AxiosError } from 'axios';
 import { FC, useCallback, useEffect, useId, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
@@ -35,7 +35,7 @@ const EditCategoryDialog: FC<EditCategoryDialogProps> = ({ category }) => {
       setError('');
     },
     onError(error) {
-      const err = error as AxiosError<ErrorResponse>;
+      const err = error as AxiosError<ValidationError>;
       setError(err.response?.data.errors[0].msg ?? 'Something went wrong');
     },
   });

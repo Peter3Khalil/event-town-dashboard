@@ -16,14 +16,17 @@ export type GetAllResponse<T> = {
   data: T[];
 };
 
-export type ErrorResponse = {
-  errors: Error[];
+export type ValidationError = {
+  errors: {
+    type: string;
+    value: string;
+    msg: string;
+    path: string;
+    location: string;
+  }[];
 };
 
-export type Error = {
-  type: string;
-  value: string;
-  msg: string;
-  path: string;
-  location: string;
+export type ResponseError = {
+  status: string;
+  message: string;
 };
