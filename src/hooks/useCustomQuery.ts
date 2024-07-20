@@ -31,9 +31,9 @@ const useCustomQuery = <TData = unknown, TError = unknown>(
 
   const [isCancelled, setIsCancelled] = useState(false);
   const cancelQuery = useCallback(() => {
-    queryClient.cancelQueries(['events']);
+    queryClient.cancelQueries(queryKey);
     setIsCancelled(true);
-  }, [queryClient]);
+  }, [queryClient, queryKey]);
   useEffect(() => {
     if (isRefetching) {
       setIsCancelled(false);

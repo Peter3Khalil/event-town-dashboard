@@ -16,7 +16,7 @@ const RecordComponent = ({
       'w-full overflow-hidden text-ellipsis text-[0.9em] text-muted-foreground',
       className,
     )}
-    title={value.toString()}
+    title={value?.toString()}
     {...props}
   >
     <span className="mr-1 capitalize">{label}: </span>
