@@ -34,6 +34,20 @@ type Interest = {
   title: string;
 };
 
-export type MutateUser = Omit<User, 'profileImg' | 'interests'> & {
-  profileImg: File;
+export type MutateUser = Omit<
+  User,
+  | 'profileImg'
+  | 'slug'
+  | 'emailVerifyCode'
+  | 'emailVerifyExpires'
+  | 'emailVerified'
+  | 'active'
+  | 'wishlist'
+  | 'calendar'
+  | 'token'
+  | '_id'
+  | 'isOAuthUser'
+> & {
+  profileImg?: File;
+  confirmPassword: string;
 };
