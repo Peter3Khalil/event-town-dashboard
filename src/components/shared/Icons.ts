@@ -24,4 +24,5 @@ export {
   Trash as TrashIcon,
   User as UserIcon,
   Users as UsersIcon,
+  ImagePlus as UploadImageIcon,
 } from 'lucide-react';

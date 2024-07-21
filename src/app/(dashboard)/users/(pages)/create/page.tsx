@@ -6,7 +6,7 @@ import {
   PageHeader,
   PageTitle,
 } from '@/components/layouts/PageLayout';
-import { AlertIcon } from '@/components/shared/Icons';
+import { AlertIcon, UploadImageIcon } from '@/components/shared/Icons';
 import MyTooltip from '@/components/shared/MyTooltip';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -30,7 +30,9 @@ import { ValidationError } from '@/types/global.types';
 import { MutateUser } from '@/types/users.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { memo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import { z } from 'zod';
@@ -70,12 +72,11 @@ const CreateUser = () => {
   });
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { handleSubmit, register, control, setError, ...rest } = useForm<
-    z.infer<typeof FORM_SCHEMA>
-  >({
-    resolver: zodResolver(FORM_SCHEMA),
-    mode: 'onChange',
-  });
+  const { handleSubmit, register, control, setError, setValue, ...rest } =
+    useForm<z.infer<typeof FORM_SCHEMA>>({
+      resolver: zodResolver(FORM_SCHEMA),
+      mode: 'onChange',
+    });
   const {
     formState: { isValid, errors },
   } = rest;
@@ -105,8 +106,13 @@ const CreateUser = () => {
   });
 
   function onSubmit(values: z.infer<typeof FORM_SCHEMA>) {
-    mutate(values as unknown as MutateUser);
+    mutate({
+      ...values,
+      profileImg: values.profileImg?.item(0),
+    } as unknown as MutateUser);
   }
+
+  console.log(rest.watch());
 
   return (
     <PageContent>
@@ -142,6 +148,45 @@ const CreateUser = () => {
       </PageHeader>
       <ScrollArea>
         <form>
+          <div className="mx-auto mb-8 flex w-full flex-col items-center justify-center rounded-md border-2 border-dashed py-4 md:w-[80%] lg:w-[50%]">
+            {(rest.getValues('profileImg') ?? []).length > 0 ? (
+              <div className="flex flex-col items-center gap-2">
+                <ImagePreview
+                  image={
+                    rest
+                      .getValues('profileImg' ?? [])
+                      ?.item(0) as unknown as File
+                  }
+                />
+                <Button
+                  className="w-fit"
+                  variant={'secondary'}
+                  onClick={() => setValue('profileImg', undefined)}
+                >
+                  Remove
+                </Button>
+                {errors.profileImg && (
+                  <p className="text-xs text-destructive">
+                    {errors.profileImg.message}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <Label
+                htmlFor="image"
+                className="flex flex-col items-center text-primary"
+              >
+                <UploadImageIcon size={50} className="mb-2" />
+                <p>Upload Image</p>
+                <Input
+                  id="image"
+                  type="file"
+                  className="hidden"
+                  {...register('profileImg')}
+                />
+              </Label>
+            )}
+          </div>
           <div className="grid grid-cols-1 items-start gap-4 gap-y-6 pb-12 md:grid-cols-2 lg:grid-cols-3">
             {FIELDS.map((field, index) => (
               <div key={index} className="flex flex-col gap-1">
@@ -272,5 +317,21 @@ const CreateUser = () => {
     </PageContent>
   );
 };
+
+const ImagePreview = memo(({ image }: { image: File }) => {
+  return (
+    <div className="relative size-28 rounded-full">
+      <Image
+        src={URL.createObjectURL(image)}
+        alt="profile"
+        className="absolute left-0 top-0 size-full rounded-[inherit] object-cover"
+        width={300}
+        height={300}
+      />
+    </div>
+  );
+});
+
+ImagePreview.displayName = 'ImagePreview';
 
 export default CreateUser;

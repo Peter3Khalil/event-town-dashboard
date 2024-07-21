@@ -40,7 +40,19 @@ class UsersApi {
   }
 
   public create(user: MutateUser, config?: AxiosRequestConfig) {
-    return client.post<User>('/users', user, config);
+    const formData = new FormData();
+
+    for (const [key, value] of Object.entries(user)) {
+      if (Array.isArray(value)) {
+        for (const item of value) {
+          formData.append(key, item as unknown as string);
+        }
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, value as string | File);
+      }
+    }
+
+    return client.post<User>('/users', formData, config);
   }
 
   public updateUser(

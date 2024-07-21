@@ -15,7 +15,7 @@ const UserComponent: FC<UserComponentProps> = ({
   className,
   ...props
 }) => {
-  const image = user.profileImg ?? 'https://picsum.photos/50/50';
+  const image = user.profileImg || '';
   return (
     <div className={cn('flex w-full items-center gap-3', className)} {...props}>
       <MyImage src={image} alt={user.name} width={50} height={50} />
