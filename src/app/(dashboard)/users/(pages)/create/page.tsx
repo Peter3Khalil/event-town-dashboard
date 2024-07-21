@@ -148,7 +148,7 @@ const CreateUser = () => {
         <form>
           <div className="mx-auto mb-8 flex w-full flex-col items-center justify-center rounded-md border-2 border-dashed py-4 md:w-[80%] lg:w-[50%]">
             {rest.getValues('profileImg')?.length > 0 ? (
-              <div className="flex flex-col items-center gap-2">
+              <div className="flex flex-col items-center gap-2 px-6">
                 <ImagePreview
                   image={
                     rest.getValues('profileImg').item(0) as unknown as File
@@ -156,13 +156,14 @@ const CreateUser = () => {
                 />
                 <Button
                   className="w-fit"
+                  type="button"
                   variant={'secondary'}
                   onClick={() => setValue('profileImg', undefined)}
                 >
                   Remove
                 </Button>
                 {errors.profileImg && (
-                  <p className="text-xs text-destructive">
+                  <p className="text-center text-xs text-destructive">
                     {errors.profileImg.message as unknown as ReactNode}
                   </p>
                 )}
