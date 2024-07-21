@@ -32,7 +32,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { memo } from 'react';
+import { memo, ReactNode } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import { z } from 'zod';
@@ -112,8 +112,6 @@ const CreateUser = () => {
     } as unknown as MutateUser);
   }
 
-  console.log(rest.watch());
-
   return (
     <PageContent>
       <PageHeader>
@@ -149,13 +147,11 @@ const CreateUser = () => {
       <ScrollArea>
         <form>
           <div className="mx-auto mb-8 flex w-full flex-col items-center justify-center rounded-md border-2 border-dashed py-4 md:w-[80%] lg:w-[50%]">
-            {(rest.getValues('profileImg') ?? []).length > 0 ? (
+            {rest.getValues('profileImg')?.length > 0 ? (
               <div className="flex flex-col items-center gap-2">
                 <ImagePreview
                   image={
-                    rest
-                      .getValues('profileImg' ?? [])
-                      ?.item(0) as unknown as File
+                    rest.getValues('profileImg').item(0) as unknown as File
                   }
                 />
                 <Button
@@ -167,7 +163,7 @@ const CreateUser = () => {
                 </Button>
                 {errors.profileImg && (
                   <p className="text-xs text-destructive">
-                    {errors.profileImg.message}
+                    {errors.profileImg.message as unknown as ReactNode}
                   </p>
                 )}
               </div>
@@ -209,7 +205,7 @@ const CreateUser = () => {
                         field.name as unknown as keyof z.infer<
                           typeof FORM_SCHEMA
                         >
-                      ]?.message
+                      ]?.message as unknown as ReactNode
                     }
                   </p>
                 )}

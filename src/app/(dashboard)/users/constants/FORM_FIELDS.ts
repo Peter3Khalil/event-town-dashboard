@@ -20,11 +20,11 @@ export const FORM_SCHEMA = z
     gender: z.string(),
     role: z.string().optional().default('user'),
     profileImg: z
-      .instanceof(FileList)
+      .any()
       .refine(
-        (fileList) => {
+        (fileList: FileList) => {
           if (!fileList || fileList.length === 0) {
-            return true; // Allow empty FileList (optional)
+            return true;
           }
 
           const file = fileList.item(0);
