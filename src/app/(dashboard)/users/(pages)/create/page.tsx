@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/components/ui/use-toast';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { useCategories } from '@/providers/categories/categories-provider';
 import UsersApi from '@/services/UsersApi';
@@ -32,7 +33,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { memo, ReactNode } from 'react';
+import { memo, ReactNode, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import { z } from 'zod';
@@ -65,6 +66,7 @@ const FIELDS = [
     placeholder: 'Confirm Password',
   },
 ];
+const validFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
 
 const CreateUser = () => {
   useSetBreadcrumb({
@@ -72,11 +74,14 @@ const CreateUser = () => {
   });
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { handleSubmit, register, control, setError, setValue, ...rest } =
-    useForm<z.infer<typeof FORM_SCHEMA>>({
-      resolver: zodResolver(FORM_SCHEMA),
-      mode: 'onChange',
-    });
+  const { toast } = useToast();
+  const [profileImg, setProfileImg] = useState<File | null>(null);
+  const { handleSubmit, register, control, setError, ...rest } = useForm<
+    z.infer<typeof FORM_SCHEMA>
+  >({
+    resolver: zodResolver(FORM_SCHEMA),
+    mode: 'onChange',
+  });
   const {
     formState: { isValid, errors },
   } = rest;
@@ -108,9 +113,24 @@ const CreateUser = () => {
   function onSubmit(values: z.infer<typeof FORM_SCHEMA>) {
     mutate({
       ...values,
-      profileImg: values.profileImg?.item(0),
+      profileImg,
     } as unknown as MutateUser);
   }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.item(0);
+    if (!file) return;
+
+    if (validFileTypes.includes(file.type)) {
+      setProfileImg(file);
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'Invalid File Type',
+        description: 'Only images are allowed',
+      });
+    }
+  };
 
   return (
     <PageContent>
@@ -147,39 +167,33 @@ const CreateUser = () => {
       <ScrollArea>
         <form>
           <div className="mx-auto mb-8 flex w-full flex-col items-center justify-center rounded-md border-2 border-dashed py-4 md:w-[80%] lg:w-[50%]">
-            {rest.getValues('profileImg')?.length > 0 ? (
+            {profileImg ? (
               <div className="flex flex-col items-center gap-2 px-6">
-                <ImagePreview
-                  image={
-                    rest.getValues('profileImg').item(0) as unknown as File
-                  }
-                />
+                <ImagePreview image={profileImg} />
                 <Button
                   className="w-fit"
                   type="button"
                   variant={'secondary'}
-                  onClick={() => setValue('profileImg', undefined)}
+                  onClick={() => {
+                    setProfileImg(null);
+                  }}
                 >
                   Remove
                 </Button>
-                {errors.profileImg && (
-                  <p className="text-center text-xs text-destructive">
-                    {errors.profileImg.message as unknown as ReactNode}
-                  </p>
-                )}
               </div>
             ) : (
               <Label
                 htmlFor="image"
-                className="flex flex-col items-center text-primary"
+                className="flex cursor-pointer flex-col items-center text-primary"
               >
                 <UploadImageIcon size={50} className="mb-2" />
                 <p>Upload Image</p>
                 <Input
                   id="image"
                   type="file"
+                  accept=".png,.webp,.jpg,.jpeg"
                   className="hidden"
-                  {...register('profileImg')}
+                  onChange={handleImageChange}
                 />
               </Label>
             )}

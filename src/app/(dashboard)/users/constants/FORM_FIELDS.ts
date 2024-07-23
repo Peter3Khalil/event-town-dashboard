@@ -1,6 +1,5 @@
 import { Input } from '@/components/ui/input';
 import { z } from 'zod';
-const validFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
 
 export const FORM_SCHEMA = z
   .object({
@@ -19,28 +18,7 @@ export const FORM_SCHEMA = z
       .max(50, 'Location must be at most 50 characters long'),
     gender: z.string(),
     role: z.string().optional().default('user'),
-    profileImg: z
-      .any()
-      .refine(
-        (fileList: FileList) => {
-          if (!fileList || fileList.length === 0) {
-            return true;
-          }
-
-          const file = fileList.item(0);
-          return file && validFileTypes.includes(file.type);
-        },
-        {
-          message:
-            'Invalid file type. Allowed types are png, jpg, jpeg, and webp.',
-        },
-      )
-      .optional(),
-    phone: z
-      .string()
-      .min(11, 'Phone number must be at least 11 characters long')
-      .max(11, 'Phone number must be at least 11 characters long')
-      .optional(),
+    phone: z.string().optional(),
     interests: z.array(z.string()).optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -107,10 +85,5 @@ export const FORM_FIELDS: FormFieldsType = {
     label: 'Role',
     type: 'select',
     values: ['user', 'admin'],
-  },
-  profileImg: {
-    name: 'profileImg',
-    label: 'Profile Image',
-    type: 'file',
   },
 };
