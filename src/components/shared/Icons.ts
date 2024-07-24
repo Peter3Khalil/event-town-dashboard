@@ -25,4 +25,7 @@ export {
   User as UserIcon,
   Users as UsersIcon,
   ImagePlus as UploadImageIcon,
+  Phone as PhoneIcon,
+  Mail as MailIcon,
+  MapPin as LocationIcon,
 } from 'lucide-react';

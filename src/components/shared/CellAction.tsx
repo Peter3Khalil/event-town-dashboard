@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import DeleteButton from '@/components/shared/DeleteButton';
 import {
   EditIcon,
   MoreHorizontalIcon,
@@ -15,8 +16,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import Link from 'next/link';
-import { useCallback } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
 
 interface CellActionProps<TData extends { _id: string }>
   extends React.ComponentProps<typeof DropdownMenuContent> {
@@ -25,28 +24,17 @@ interface CellActionProps<TData extends { _id: string }>
     id: string,
     config?: AxiosRequestConfig,
   ) => Promise<AxiosResponse<any, any>>;
-  invalidateKey: string;
+  invalidateKey?: string;
   updateHref: string;
 }
 
 const CellAction = <TData extends { _id: string }>({
   model,
   deleteFunction,
-  invalidateKey,
   updateHref,
+  invalidateKey,
   ...props
 }: CellActionProps<TData>) => {
-  const queryClient = useQueryClient();
-  const { mutate, isLoading } = useMutation(deleteFunction, {
-    onSettled: () => {
-      queryClient.invalidateQueries(invalidateKey);
-    },
-  });
-
-  const handleDelete = useCallback(() => {
-    mutate(model._id);
-  }, [model._id, mutate]);
-
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -65,14 +53,15 @@ const CellAction = <TData extends { _id: string }>({
           </Button>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Button
+          <DeleteButton
             variant={'ghost'}
             className="size-auto p-1 text-xs text-destructive hover:text-destructive"
-            onClick={handleDelete}
-            disabled={isLoading}
+            invalidateKey={invalidateKey}
+            model={model}
+            deleteFunction={deleteFunction}
           >
             <TrashIcon className="mr-2 size-4 shrink-0" /> Delete
-          </Button>
+          </DeleteButton>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
