@@ -48,6 +48,12 @@ export const FORM_FIELDS: FormFieldsType = {
     placeholder: 'example@gmail.com',
     type: 'email',
   },
+  location: {
+    name: 'location',
+    type: 'text',
+    label: 'Location',
+    placeholder: 'Cairo, Egypt',
+  },
   password: {
     name: 'password',
     label: 'password',
@@ -57,12 +63,6 @@ export const FORM_FIELDS: FormFieldsType = {
     name: 'confirmPassword',
     label: 'confirm password',
     type: 'password',
-  },
-  location: {
-    name: 'location',
-    type: 'text',
-    label: 'Location',
-    placeholder: 'Cairo, Egypt',
   },
   phone: {
     name: 'phone',
