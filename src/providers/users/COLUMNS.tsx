@@ -41,7 +41,7 @@ export const COLUMNS: ColumnDef<User>[] = [
       <CellAction
         deleteFunction={UsersApi.delete}
         invalidateKey="users"
-        updateHref={`/users/${row.original._id}`}
+        updateHref={`/users/update/${row.original._id}`}
         model={row.original}
       />
     ),

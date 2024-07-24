@@ -56,11 +56,17 @@ class UsersApi {
   }
 
   public updateUser(
-    id: string,
-    user: Partial<User>,
+    updatedUser: {
+      id: string;
+      user: Partial<User>;
+    },
     config?: AxiosRequestConfig,
   ) {
-    return client.put<User>(`/users/${id}`, user, config);
+    return client.put<User>(
+      `/users/${updatedUser.id}`,
+      updatedUser.user,
+      config,
+    );
   }
 
   public updateMyData(user: Partial<MutateUser>, config?: AxiosRequestConfig) {
