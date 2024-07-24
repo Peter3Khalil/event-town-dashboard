@@ -1,8 +1,5 @@
 'use client';
-import {
-  FORM_FIELDS,
-  FORM_SCHEMA,
-} from '@/app/(dashboard)/users/constants/FORM_FIELDS';
+import { FORM_FIELDS } from '@/app/(dashboard)/users/constants/FORM_FIELDS';
 import {
   PageContent,
   PageDescription,
@@ -14,50 +11,76 @@ import MyTooltip from '@/components/shared/MyTooltip';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import UserForm from '@/components/users/UserForm';
+import useCustomQuery from '@/hooks/useCustomQuery';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { cn } from '@/lib/utils';
 import UsersApi from '@/services/UsersApi';
 import { ValidationError } from '@/types/global.types';
-import { MutateUser } from '@/types/users.types';
+import { User } from '@/types/users.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import { z } from 'zod';
+
+type UpdateUserProps = {
+  params: {
+    id: string;
+  };
+};
 
 const formFields = Object.entries(FORM_FIELDS)
   .map(([, value]) => {
     return value;
   })
   .filter((field) =>
-    [
-      'name',
-      'email',
-      'password',
-      'confirmPassword',
-      'location',
-      'phone',
-    ].includes(field.name),
+    ['name', 'email', 'location', 'phone'].includes(field.name),
   );
 
-const CreateUser = () => {
+const UPDATE_USER_FORM_SCHEMA = z.object({
+  name: z
+    .string()
+    .min(3, 'Name must be at least 3 characters long')
+    .max(30, 'Name must be at most 30 characters long'),
+  email: z.string().email('Invalid email address'),
+  location: z
+    .string()
+    .min(3, 'Location must be at least 3 characters long')
+    .max(50, 'Location must be at most 50 characters long'),
+  gender: z.string().default('male'),
+  role: z.string().optional().default('user'),
+  phone: z.string().optional(),
+  interests: z.array(z.string()).optional(),
+});
+
+const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
   useSetBreadcrumb({
-    breadcrumbPath: '/dashboard/users/Create',
+    breadcrumbPath: '/dashboard/users/update user',
   });
   const queryClient = useQueryClient();
   const router = useRouter();
   const [profileImg, setProfileImg] = useState<File | null | string>(null);
-  const form = useForm<z.infer<typeof FORM_SCHEMA>>({
-    resolver: zodResolver(FORM_SCHEMA),
+  const form = useForm<z.infer<typeof UPDATE_USER_FORM_SCHEMA>>({
+    resolver: zodResolver(UPDATE_USER_FORM_SCHEMA),
     mode: 'onChange',
   });
   const {
     formState: { isValid, errors },
   } = form;
 
-  const { mutate, isLoading } = useMutation(UsersApi.create, {
+  const { data } = useCustomQuery(
+    ['userDetails', [id]],
+    () => UsersApi.getOne(id),
+    {
+      cacheTime: 0,
+    },
+  );
+
+  const userDetails = useMemo(() => data?.data.data, [data?.data.data]);
+
+  const { mutate, isLoading } = useMutation(UsersApi.updateUser, {
     onSuccess() {
       queryClient.invalidateQueries('users');
       router.push('/users');
@@ -69,7 +92,7 @@ const CreateUser = () => {
         const errors = error.response.data.errors;
         errors.map((e) => {
           form.setError(
-            e.path as unknown as keyof z.infer<typeof FORM_SCHEMA>,
+            e.path as unknown as keyof z.infer<typeof UPDATE_USER_FORM_SCHEMA>,
             {
               message: e.msg,
             },
@@ -79,12 +102,27 @@ const CreateUser = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof FORM_SCHEMA>) {
-    mutate({
-      ...values,
-      profileImg,
-    } as unknown as MutateUser);
+  function onSubmit(values: z.infer<typeof UPDATE_USER_FORM_SCHEMA>) {
+    mutate({ id, user: values as Partial<User> });
   }
+
+  // fill the form with the user details
+  useEffect(() => {
+    if (userDetails) {
+      const { name, email, location, gender, interests, phone, role } =
+        userDetails;
+      form.reset({
+        name,
+        email,
+        location,
+        gender,
+        interests: interests.map((i) => i._id),
+        phone,
+        role,
+      });
+      setProfileImg(userDetails?.profileImg ?? null);
+    }
+  }, [form, userDetails]);
 
   return (
     <PageContent
@@ -95,7 +133,7 @@ const CreateUser = () => {
       <PageHeader>
         <div>
           <div className="flex items-center gap-2">
-            <PageTitle>Create User</PageTitle>
+            <PageTitle>Update User</PageTitle>
             {Object.keys(errors).length > 0 && (
               <MyTooltip
                 className="bg-destructive"
@@ -109,7 +147,7 @@ const CreateUser = () => {
               </MyTooltip>
             )}
           </div>
-          <PageDescription>Add new user to your system</PageDescription>
+          <PageDescription>Update user data </PageDescription>
         </div>
         <Button
           className="mt-6"
@@ -119,7 +157,7 @@ const CreateUser = () => {
           }}
           disabled={!isValid || isLoading}
         >
-          {isLoading ? 'Creating...' : 'Create'}
+          {isLoading ? 'Updating...' : 'Update'}
         </Button>
       </PageHeader>
       <ScrollArea>
@@ -134,4 +172,4 @@ const CreateUser = () => {
   );
 };
 
-export default CreateUser;
+export default UpdateUser;

@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FORM_FIELDS } from '@/app/(dashboard)/users/constants/FORM_FIELDS';
+import {
+  FORM_FIELDS,
+  FormFieldType,
+} from '@/app/(dashboard)/users/constants/FORM_FIELDS';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
@@ -31,7 +34,7 @@ import {
   UseFormReturn,
 } from 'react-hook-form';
 
-const FIELDS = Object.entries(FORM_FIELDS)
+const defaultFormFields = Object.entries(FORM_FIELDS)
   .map(([, value]) => {
     return value;
   })
@@ -48,14 +51,16 @@ const FIELDS = Object.entries(FORM_FIELDS)
 
 type UserFormProps<T extends FieldValues> = {
   form: UseFormReturn<T>;
-  profileImg: File | null;
+  profileImg: File | null | string;
+  formFields?: FormFieldType[];
   // eslint-disable-next-line no-unused-vars
-  setProfileImg: (file: File | null) => void;
+  setProfileImg: (file: File | null | string) => void;
 };
 
 const UserForm = <T extends FieldValues>({
   form,
   profileImg,
+  formFields = defaultFormFields,
   setProfileImg,
 }: UserFormProps<T>) => {
   const {
@@ -68,7 +73,7 @@ const UserForm = <T extends FieldValues>({
       <form className="px-2">
         <ImageUploader profileImg={profileImg} setProfileImg={setProfileImg} />
         <div className="grid grid-cols-1 items-start gap-4 gap-y-6 pb-12 md:grid-cols-2 lg:grid-cols-3">
-          {FIELDS.map((input, index) => (
+          {formFields.map((input, index) => (
             <FormField
               key={index}
               control={form.control}
@@ -90,7 +95,12 @@ const UserForm = <T extends FieldValues>({
               <Controller
                 name={'role' as Path<T>}
                 control={form.control}
-                defaultValue={'user' as PathValue<T, Path<T>>}
+                defaultValue={
+                  (form.getValues('role' as Path<T>) as PathValue<
+                    T,
+                    Path<T>
+                  >) || ('user' as PathValue<T, Path<T>>)
+                }
                 render={({ field }) => (
                   <Select
                     defaultValue="user"
@@ -115,10 +125,8 @@ const UserForm = <T extends FieldValues>({
               <Controller
                 name={'gender' as Path<T>}
                 control={form.control}
-                defaultValue={'male' as PathValue<T, Path<T>>}
                 render={({ field }) => (
                   <RadioGroup
-                    defaultValue="comfortable"
                     className="flex"
                     onValueChange={(value) => field.onChange(value)}
                   >
@@ -131,7 +139,11 @@ const UserForm = <T extends FieldValues>({
                       <Label htmlFor="r1">Male</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="female" id="r2" />
+                      <RadioGroupItem
+                        checked={field.value === 'female'}
+                        value="female"
+                        id="r2"
+                      />
                       <Label htmlFor="r2">Female</Label>
                     </div>
                   </RadioGroup>
@@ -155,6 +167,7 @@ const UserForm = <T extends FieldValues>({
                         <li key={index} className="flex items-center gap-2">
                           <Checkbox
                             id={category._id}
+                            checked={field.value?.includes(category._id)}
                             onCheckedChange={(checked) => {
                               const values = field.value || [];
 

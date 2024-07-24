@@ -16,7 +16,7 @@ export const FORM_SCHEMA = z
       .string()
       .min(3, 'Location must be at least 3 characters long')
       .max(50, 'Location must be at most 50 characters long'),
-    gender: z.string(),
+    gender: z.string().default('male'),
     role: z.string().optional().default('user'),
     phone: z.string().optional(),
     interests: z.array(z.string()).optional(),
@@ -26,7 +26,7 @@ export const FORM_SCHEMA = z
     path: ['confirmPassword'],
   });
 
-interface FormFieldType extends React.ComponentProps<typeof Input> {
+export interface FormFieldType extends React.ComponentProps<typeof Input> {
   name: keyof z.infer<typeof FORM_SCHEMA>;
   values?: string[];
   label: string;

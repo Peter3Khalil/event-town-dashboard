@@ -7,9 +7,9 @@ import Image from 'next/image';
 import React, { memo, useMemo } from 'react';
 
 type ImageUploaderProps = {
-  profileImg: File | null;
+  profileImg: File | null | string;
   // eslint-disable-next-line no-unused-vars
-  setProfileImg: (file: File | null) => void;
+  setProfileImg: (file: File | null | string) => void;
 };
 
 const ImageUploader = memo(
@@ -41,7 +41,11 @@ const ImageUploader = memo(
           <div className="flex flex-col items-center gap-2 px-6">
             <div className="relative size-28 rounded-full">
               <Image
-                src={URL.createObjectURL(profileImg)}
+                src={
+                  typeof profileImg === 'string'
+                    ? profileImg
+                    : URL.createObjectURL(profileImg)
+                }
                 alt="profile"
                 className="absolute left-0 top-0 size-full rounded-[inherit] object-cover"
                 width={300}
