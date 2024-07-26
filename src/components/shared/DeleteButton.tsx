@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from '@/components/ui/button';
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 
@@ -24,13 +23,9 @@ const DeleteButton = <TData extends { _id: string }>({
   ...props
 }: DeleteButtonProps<TData>) => {
   const queryClient = useQueryClient();
-  const router = useRouter();
   const { mutate, isLoading } = useMutation(deleteFunction, {
     onSettled: () => {
       if (invalidateKey) queryClient.invalidateQueries(invalidateKey);
-    },
-    onSuccess() {
-      router.push('/users');
     },
   });
 
