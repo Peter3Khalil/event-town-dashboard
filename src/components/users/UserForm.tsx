@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import ImageUploader from '@/components/users/ImageUploader';
+import ImageUploader from '@/components/shared/ImageUploader';
 import { useCategories } from '@/providers/categories/categories-provider';
 import {
   Controller,
@@ -71,7 +71,7 @@ const UserForm = <T extends FieldValues>({
   return (
     <Form {...form}>
       <form className="px-2">
-        <ImageUploader profileImg={profileImg} setProfileImg={setProfileImg} />
+        <ImageUploader image={profileImg} setImage={setProfileImg} />
         <div className="grid grid-cols-1 items-start gap-4 gap-y-6 pb-12 md:grid-cols-2 lg:grid-cols-3">
           {formFields.map((input, index) => (
             <FormField
