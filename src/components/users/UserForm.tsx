@@ -33,6 +33,7 @@ import {
   PathValue,
   UseFormReturn,
 } from 'react-hook-form';
+import FormLayout from '@/components/layouts/FormLayout';
 
 const defaultFormFields = Object.entries(FORM_FIELDS)
   .map(([, value]) => {
@@ -72,7 +73,7 @@ const UserForm = <T extends FieldValues>({
     <Form {...form}>
       <form className="px-2">
         <ImageUploader image={profileImg} setImage={setProfileImg} />
-        <div className="grid grid-cols-1 items-start gap-4 gap-y-6 pb-12 md:grid-cols-2 lg:grid-cols-3">
+        <FormLayout>
           {formFields.map((input, index) => (
             <FormField
               key={index}
@@ -193,7 +194,7 @@ const UserForm = <T extends FieldValues>({
               </ul>
             )}
           </div>
-        </div>
+        </FormLayout>
       </form>
     </Form>
   );
