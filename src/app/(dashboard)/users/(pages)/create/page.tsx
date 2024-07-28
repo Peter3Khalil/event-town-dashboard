@@ -82,7 +82,7 @@ const CreateUser = () => {
   function onSubmit(values: z.infer<typeof FORM_SCHEMA>) {
     mutate({
       ...values,
-      profileImg,
+      profileImg: profileImg ?? '',
     } as unknown as MutateUser);
   }
 

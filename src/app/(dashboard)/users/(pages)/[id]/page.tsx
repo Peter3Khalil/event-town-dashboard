@@ -19,7 +19,7 @@ import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import UsersApi from '@/services/UsersApi';
 import { User } from '@/types/users.types';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 
 interface UserDetailsProps {
   params: {
@@ -35,6 +35,12 @@ const UserDetails: FC<UserDetailsProps> = ({ params: { id } }) => {
   useSetBreadcrumb({
     breadcrumbPath: '/dashboard/users/user details',
   });
+
+  useEffect(() => {
+    if (user) {
+      document.title = user.name + ' | Admin Dashboard';
+    }
+  }, [user]);
   if (isError) return <div>Failed to load user</div>;
   return (
     <PageContent className="items-center pb-4">

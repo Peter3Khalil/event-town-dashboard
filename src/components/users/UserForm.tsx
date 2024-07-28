@@ -24,7 +24,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import ImageUploader from '@/components/shared/ImageUploader';
 import { useCategories } from '@/providers/categories/categories-provider';
 import {
   Controller,
@@ -34,6 +33,11 @@ import {
   UseFormReturn,
 } from 'react-hook-form';
 import FormLayout from '@/components/layouts/FormLayout';
+import {
+  ImagePreview,
+  ImageUploader,
+  ImageUploaderProvider,
+} from '@/components/shared/ImageUploader';
 
 const defaultFormFields = Object.entries(FORM_FIELDS)
   .map(([, value]) => {
@@ -72,7 +76,10 @@ const UserForm = <T extends FieldValues>({
   return (
     <Form {...form}>
       <form className="px-2">
-        <ImageUploader image={profileImg} setImage={setProfileImg} />
+        <ImageUploaderProvider value={profileImg} onImageChange={setProfileImg}>
+          <ImagePreview />
+          <ImageUploader />
+        </ImageUploaderProvider>
         <FormLayout>
           {formFields.map((input, index) => (
             <FormField
