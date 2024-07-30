@@ -42,7 +42,16 @@ export const COLUMNS: ColumnDef<Event>[] = [
     id: 'Price',
     accessorKey: 'eventPrice',
     header: () => <PriceSorting />,
-    cell: ({ getValue }) => `$${getValue()}`,
+    cell: ({
+      row: {
+        original: { eventPrice },
+      },
+    }) => (
+      <p>
+        <span className="font-semibold">{eventPrice}</span>
+        <span className="ml-1 text-[0.8em] italic">EGP</span>
+      </p>
+    ),
   },
   {
     id: 'Status',
