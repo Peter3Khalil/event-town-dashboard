@@ -20,13 +20,20 @@ export const EVENT_SCHEMA = z.object({
     .min(3, 'Name must be at least 3 characters long')
     .max(30, 'Name must be at most 30 characters long'),
   eventAddress: z.string().optional(),
-  eventCategory: z.array(z.string()),
+  eventCategory: z.array(z.string()).refine((val) => val.length > 0, {
+    message: 'Please select at least one category',
+  }),
   eventDate: z.string(),
-  eventStartTime: z.string(),
-  eventEndTime: z.string(),
+  eventStartTime: z.string().transform((val) => new Date(val).toISOString()),
+  eventEndTime: z.string().transform((val) => new Date(val).toISOString()),
   eventLocation: z.string(),
   ticketEventLink: z.string().url(),
-  eventPrice: z.number(),
+  eventPrice: z
+    .string()
+    .refine((val) => parseFloat(val) > 0 && val.length > 0, {
+      message: 'Price must be a positive number',
+    })
+    .transform((val) => parseFloat(val)),
   eventDescription: z.string().optional(),
   eventPlace: z.string().optional(),
 });

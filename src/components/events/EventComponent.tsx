@@ -15,7 +15,7 @@ const EventComponent: FC<EventComponentProps> = ({
   className,
   ...props
 }) => {
-  const image = event.eventImage ?? 'https://picsum.photos/50/50';
+  const image = event.eventImage ?? '';
   return (
     <div className={cn('flex w-full items-center gap-3', className)} {...props}>
       <MyImage src={image} alt={event.eventName} width={50} height={50} />
@@ -32,8 +32,12 @@ const EventComponent: FC<EventComponentProps> = ({
           label="organization name"
           value={event.organizationName}
         />
-        <RecordComponent label="location" value={event.eventAddress} />
-        <RecordComponent label="Description" value={event.eventDescription} />
+        {event?.eventAddress && (
+          <RecordComponent label="location" value={event.eventAddress} />
+        )}
+        {event?.eventDescription && (
+          <RecordComponent label="Description" value={event.eventDescription} />
+        )}
       </div>
     </div>
   );

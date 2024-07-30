@@ -6,10 +6,10 @@ export type Event = {
   _id: string;
   organizer: Organizer;
   organizationName: string;
-  organizationWebsite: string;
-  organizerPlan: string;
+  organizationWebsite?: string;
+  organizerPlan: 'free' | 'basic' | 'standard' | 'premium';
   eventName: string;
-  eventAddress: string;
+  eventAddress?: string;
   eventCategory: EventCategory;
   eventDate: string;
   eventStartTime: string;
@@ -19,7 +19,7 @@ export type Event = {
   eventImage?: string;
   ticketEventLink: string;
   eventPrice: number;
-  eventDescription: string;
+  eventDescription?: string;
   eventStatus: EventStatus;
   createdAt: string;
   updatedAt: string;
@@ -78,3 +78,15 @@ export type EventsQueryParams = GetAllQueryParams & {
 };
 
 export type EventStatusWithOutAll = Exclude<EventStatus, 'all'>;
+
+export type AddEventType = Omit<
+  Event,
+  | '_id'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'organizer'
+  | 'eventStatus'
+  | 'eventCategory'
+> & {
+  eventCategory: string[];
+};

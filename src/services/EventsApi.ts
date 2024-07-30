@@ -3,6 +3,8 @@ import {
   EventsQueryParams,
   GetAllEventsResponse,
   EventAction,
+  Event,
+  AddEventType,
 } from '@/types/event.types';
 import { AxiosRequestConfig } from 'axios';
 
@@ -37,7 +39,7 @@ class EventsApi {
     return client.get<Event>(`/events/${id}`, config);
   }
 
-  public create(event: Event, config?: AxiosRequestConfig) {
+  public create(event: AddEventType, config?: AxiosRequestConfig) {
     return client.post<Event>('/events', event, config);
   }
 
