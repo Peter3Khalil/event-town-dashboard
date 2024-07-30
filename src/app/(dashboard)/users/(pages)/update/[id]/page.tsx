@@ -1,5 +1,4 @@
 'use client';
-import { FORM_FIELDS } from '@/app/(dashboard)/users/constants/FORM_FIELDS';
 import {
   PageContent,
   PageDescription,
@@ -11,11 +10,12 @@ import MyTooltip from '@/components/shared/MyTooltip';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import UserForm from '@/components/users/UserForm';
+import { USER_SCHEMA } from '@/constants/formSchemas';
 import useCustomQuery from '@/hooks/useCustomQuery';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { cn } from '@/lib/utils';
 import UsersApi from '@/services/UsersApi';
-import { ValidationError } from '@/types/global.types';
+import { FormInput, ValidationError } from '@/types/global.types';
 import { User } from '@/types/users.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
@@ -25,35 +25,13 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import { z } from 'zod';
 
+const UPDATE_USER_SCHEMA = USER_SCHEMA.partial();
+
 type UpdateUserProps = {
   params: {
     id: string;
   };
 };
-
-const formFields = Object.entries(FORM_FIELDS)
-  .map(([, value]) => {
-    return value;
-  })
-  .filter((field) =>
-    ['name', 'email', 'location', 'phone'].includes(field.name),
-  );
-
-const UPDATE_USER_FORM_SCHEMA = z.object({
-  name: z
-    .string()
-    .min(3, 'Name must be at least 3 characters long')
-    .max(30, 'Name must be at most 30 characters long'),
-  email: z.string().email('Invalid email address'),
-  location: z
-    .string()
-    .min(3, 'Location must be at least 3 characters long')
-    .max(50, 'Location must be at most 50 characters long'),
-  gender: z.string().default('male'),
-  role: z.string().optional().default('user'),
-  phone: z.string().optional(),
-  interests: z.array(z.string()).optional(),
-});
 
 const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
   useSetBreadcrumb({
@@ -62,8 +40,8 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const [profileImg, setProfileImg] = useState<File | null | string>(null);
-  const form = useForm<z.infer<typeof UPDATE_USER_FORM_SCHEMA>>({
-    resolver: zodResolver(UPDATE_USER_FORM_SCHEMA),
+  const form = useForm<z.infer<typeof UPDATE_USER_SCHEMA>>({
+    resolver: zodResolver(UPDATE_USER_SCHEMA),
     mode: 'onChange',
   });
   const {
@@ -83,7 +61,7 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
   const { mutate, isLoading } = useMutation(UsersApi.updateUser, {
     onSuccess() {
       queryClient.invalidateQueries('users');
-      router.push('/users');
+      router.push(`/users/${id}`);
     },
     onError(err) {
       const error = err as AxiosError<ValidationError>;
@@ -92,7 +70,7 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
         const errors = error.response.data.errors;
         errors.map((e) => {
           form.setError(
-            e.path as unknown as keyof z.infer<typeof UPDATE_USER_FORM_SCHEMA>,
+            e.path as unknown as keyof z.infer<typeof UPDATE_USER_SCHEMA>,
             {
               message: e.msg,
             },
@@ -102,9 +80,51 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof UPDATE_USER_FORM_SCHEMA>) {
+  function onSubmit(values: z.infer<typeof UPDATE_USER_SCHEMA>) {
     mutate({ id, user: values as Partial<User> });
   }
+
+  const formInputs: FormInput[] = useMemo(
+    () => [
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+        placeholder: 'Enter Name',
+      },
+      {
+        name: 'email',
+        label: 'Email',
+        type: 'email',
+        placeholder: 'Enter Email',
+      },
+      {
+        name: 'password',
+        label: 'Password',
+        type: 'password',
+        placeholder: 'Enter Password',
+      },
+      {
+        name: 'confirmPassword',
+        label: 'Confirm Password',
+        type: 'password',
+        placeholder: 'Enter Confirm Password',
+      },
+      {
+        name: 'location',
+        label: 'Location',
+        type: 'text',
+        placeholder: 'Enter Location',
+      },
+      {
+        name: 'phone',
+        label: 'Phone',
+        type: 'number',
+        placeholder: 'Enter Phone',
+      },
+    ],
+    [],
+  );
 
   // fill the form with the user details
   useEffect(() => {
@@ -163,8 +183,8 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
       <ScrollArea>
         <UserForm
           form={form}
-          formFields={formFields}
           profileImg={profileImg}
+          formInputs={formInputs}
           setProfileImg={setProfileImg}
         />
       </ScrollArea>

@@ -30,3 +30,7 @@ export type ResponseError = {
   status: string;
   message: string;
 };
+
+export type FormInput = React.InputHTMLAttributes<HTMLInputElement> & {
+  label: string;
+};

@@ -1,9 +1,5 @@
 'use client';
 import {
-  FORM_FIELDS,
-  FORM_SCHEMA,
-} from '@/app/(dashboard)/users/constants/FORM_FIELDS';
-import {
   PageContent,
   PageDescription,
   PageHeader,
@@ -14,33 +10,27 @@ import MyTooltip from '@/components/shared/MyTooltip';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import UserForm from '@/components/users/UserForm';
+import { USER_SCHEMA } from '@/constants/formSchemas';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { cn } from '@/lib/utils';
 import UsersApi from '@/services/UsersApi';
-import { ValidationError } from '@/types/global.types';
+import { FormInput, ValidationError } from '@/types/global.types';
 import { MutateUser } from '@/types/users.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import { z } from 'zod';
 
-const formFields = Object.entries(FORM_FIELDS)
-  .map(([, value]) => {
-    return value;
-  })
-  .filter((field) =>
-    [
-      'name',
-      'email',
-      'password',
-      'confirmPassword',
-      'location',
-      'phone',
-    ].includes(field.name),
-  );
+const CREATE_USER_SCHEMA = USER_SCHEMA.refine(
+  (data) => data.password === data.confirmPassword,
+  {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  },
+);
 
 const CreateUser = () => {
   useSetBreadcrumb({
@@ -49,8 +39,8 @@ const CreateUser = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const [profileImg, setProfileImg] = useState<File | null | string>(null);
-  const form = useForm<z.infer<typeof FORM_SCHEMA>>({
-    resolver: zodResolver(FORM_SCHEMA),
+  const form = useForm<z.infer<typeof CREATE_USER_SCHEMA>>({
+    resolver: zodResolver(CREATE_USER_SCHEMA),
     mode: 'onChange',
   });
   const {
@@ -69,7 +59,7 @@ const CreateUser = () => {
         const errors = error.response.data.errors;
         errors.map((e) => {
           form.setError(
-            e.path as unknown as keyof z.infer<typeof FORM_SCHEMA>,
+            e.path as unknown as keyof z.infer<typeof CREATE_USER_SCHEMA>,
             {
               message: e.msg,
             },
@@ -79,13 +69,54 @@ const CreateUser = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof FORM_SCHEMA>) {
+  function onSubmit(values: z.infer<typeof CREATE_USER_SCHEMA>) {
     mutate({
       ...values,
       profileImg: profileImg ?? '',
     } as unknown as MutateUser);
   }
 
+  const formInputs: FormInput[] = useMemo(
+    () => [
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+        placeholder: 'Enter Name',
+      },
+      {
+        name: 'email',
+        label: 'Email',
+        type: 'email',
+        placeholder: 'Enter Email',
+      },
+      {
+        name: 'password',
+        label: 'Password',
+        type: 'password',
+        placeholder: 'Enter Password',
+      },
+      {
+        name: 'confirmPassword',
+        label: 'Confirm Password',
+        type: 'password',
+        placeholder: 'Enter Confirm Password',
+      },
+      {
+        name: 'location',
+        label: 'Location',
+        type: 'text',
+        placeholder: 'Enter Location',
+      },
+      {
+        name: 'phone',
+        label: 'Phone',
+        type: 'number',
+        placeholder: 'Enter Phone',
+      },
+    ],
+    [],
+  );
   return (
     <PageContent
       className={cn({
@@ -125,8 +156,8 @@ const CreateUser = () => {
       <ScrollArea>
         <UserForm
           form={form}
-          formFields={formFields}
           profileImg={profileImg}
+          formInputs={formInputs}
           setProfileImg={setProfileImg}
         />
       </ScrollArea>

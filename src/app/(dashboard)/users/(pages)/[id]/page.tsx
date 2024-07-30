@@ -28,8 +28,12 @@ interface UserDetailsProps {
 }
 
 const UserDetails: FC<UserDetailsProps> = ({ params: { id } }) => {
-  const { data, isError, isLoading } = useCustomQuery(['user', id], () =>
-    UsersApi.getOne(id),
+  const { data, isError, isLoading } = useCustomQuery(
+    ['user', id],
+    () => UsersApi.getOne(id),
+    {
+      cacheTime: 0,
+    },
   );
   const user = data?.data.data;
   useSetBreadcrumb({

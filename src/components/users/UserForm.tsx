@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import FormLayout from '@/components/layouts/FormLayout';
 import {
-  FORM_FIELDS,
-  FormFieldType,
-} from '@/app/(dashboard)/users/constants/FORM_FIELDS';
+  ImagePreview,
+  ImageUploader,
+  ImageUploaderProvider,
+} from '@/components/shared/ImageUploader';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
@@ -25,6 +26,7 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { useCategories } from '@/providers/categories/categories-provider';
+import { FormInput } from '@/types/global.types';
 import {
   Controller,
   FieldValues,
@@ -32,32 +34,11 @@ import {
   PathValue,
   UseFormReturn,
 } from 'react-hook-form';
-import FormLayout from '@/components/layouts/FormLayout';
-import {
-  ImagePreview,
-  ImageUploader,
-  ImageUploaderProvider,
-} from '@/components/shared/ImageUploader';
-
-const defaultFormFields = Object.entries(FORM_FIELDS)
-  .map(([, value]) => {
-    return value;
-  })
-  .filter((field) =>
-    [
-      'name',
-      'email',
-      'password',
-      'confirmPassword',
-      'location',
-      'phone',
-    ].includes(field.name),
-  );
 
 type UserFormProps<T extends FieldValues> = {
   form: UseFormReturn<T>;
   profileImg: File | null | string;
-  formFields?: FormFieldType[];
+  formInputs?: FormInput[];
   // eslint-disable-next-line no-unused-vars
   setProfileImg: (file: File | null | string) => void;
 };
@@ -65,7 +46,7 @@ type UserFormProps<T extends FieldValues> = {
 const UserForm = <T extends FieldValues>({
   form,
   profileImg,
-  formFields = defaultFormFields,
+  formInputs = [],
   setProfileImg,
 }: UserFormProps<T>) => {
   const {
@@ -81,7 +62,7 @@ const UserForm = <T extends FieldValues>({
           <ImageUploader />
         </ImageUploaderProvider>
         <FormLayout>
-          {formFields.map((input, index) => (
+          {formInputs.map((input, index) => (
             <FormField
               key={index}
               control={form.control}
