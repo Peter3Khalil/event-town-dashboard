@@ -38,7 +38,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Capitalize } from '@/lib/utils';
+import { Capitalize, formatDate } from '@/lib/utils';
 
 type EventFormProps<T extends FieldValues> = {
   form: UseFormReturn<T>;
@@ -66,22 +66,50 @@ const EventForm = <T extends FieldValues>({
           <ImageUploader />
         </ImageUploaderProvider>
         <FormLayout>
-          {formInputs.map((input, index) => (
-            <FormField
-              key={index}
-              control={form.control}
-              name={input.name as Path<T>}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="capitalize">{input.label}</FormLabel>
-                  <FormControl>
-                    <Input {...input} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ))}
+          {formInputs.map((input, index) =>
+            input.type === 'datetime-local' || input.type === 'date' ? (
+              <FormField
+                key={index}
+                control={form.control}
+                name={input.name as Path<T>}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="capitalize">{input.label}</FormLabel>
+                    <FormControl>
+                      <Input
+                        min={
+                          input.type === 'datetime-local'
+                            ? formatDate(
+                                new Date().toISOString(),
+                                'YYYY-mm-ddTHH:MM',
+                              )
+                            : formatDate(new Date().toString())
+                        }
+                        {...input}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : (
+              <FormField
+                key={index}
+                control={form.control}
+                name={input.name as Path<T>}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="capitalize">{input.label}</FormLabel>
+                    <FormControl>
+                      <Input {...input} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ),
+          )}
           <div className="flex flex-col gap-1">
             <Label>Plan</Label>
             <Controller
