@@ -1,5 +1,6 @@
 'use client';
 import EventForm from '@/components/events/EventForm';
+import FormSkeleton from '@/components/FormSkeleton';
 import {
   PageContent,
   PageDescription,
@@ -83,7 +84,7 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
     formState: { isValid, errors },
   } = form;
 
-  const { data } = useCustomQuery(
+  const { data, isLoading: isLoadingEvent } = useCustomQuery(
     ['eventDetails', [id]],
     () => EventsApi.getOne(id),
     {
@@ -293,21 +294,38 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
           </div>
           <PageDescription>Update the event details below</PageDescription>
         </div>
-        <div className="item hidden flex-col gap-2 md:flex md:flex-row">
+        <div
+          className={cn('item hidden flex-col gap-2 md:flex md:flex-row', {
+            hidden: isLoadingEvent,
+          })}
+        >
           {UpdateButton}
           {DiscardButton}
           {ClearButton}
         </div>
       </PageHeader>
       <ScrollArea>
+        <FormSkeleton
+          className={cn({
+            hidden: !isLoadingEvent,
+          })}
+          count={12}
+        />
         <EventForm
           form={form}
           formInputs={formInputs}
           eventImage={image}
           setEventImage={setImage}
+          className={cn({
+            hidden: isLoadingEvent,
+          })}
         />
       </ScrollArea>
-      <div className="flex justify-center gap-2 border-t py-2 md:hidden">
+      <div
+        className={cn('flex justify-center gap-2 border-t py-2 md:hidden', {
+          hidden: isLoadingEvent,
+        })}
+      >
         {UpdateButton}
         {DiscardButton}
         {ClearButton}

@@ -38,23 +38,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Capitalize, formatDate } from '@/lib/utils';
+import { Capitalize, cn, formatDate } from '@/lib/utils';
 import { Event } from '@/types/event.types';
 import { useMemo } from 'react';
 
-type EventFormProps<T extends FieldValues> = {
-  form: UseFormReturn<T>;
-  eventImage: File | null | string;
-  formInputs?: FormInput[];
-  // eslint-disable-next-line no-unused-vars
-  setEventImage: (file: File | null | string) => void;
-};
+type EventFormProps<T extends FieldValues> =
+  React.HTMLAttributes<HTMLFormElement> & {
+    form: UseFormReturn<T>;
+    eventImage: File | null | string;
+    formInputs?: FormInput[];
+    // eslint-disable-next-line no-unused-vars
+    setEventImage: (file: File | null | string) => void;
+  };
 
 const EventForm = <T extends FieldValues>({
   form,
   eventImage,
   setEventImage,
   formInputs = [],
+  className,
+  ...props
 }: EventFormProps<T>) => {
   const {
     queryResult: { data, isLoading: isLoadingCategories },
@@ -79,7 +82,7 @@ const EventForm = <T extends FieldValues>({
 
   return (
     <Form {...form}>
-      <form className="px-2">
+      <form className={cn('px-2', className)} {...props}>
         <ImageUploaderProvider value={eventImage} onImageChange={setEventImage}>
           <ImagePreview />
           <ImageUploader />

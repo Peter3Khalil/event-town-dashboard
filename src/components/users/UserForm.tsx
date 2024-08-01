@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 import { useCategories } from '@/providers/categories/categories-provider';
 import { FormInput } from '@/types/global.types';
 import {
@@ -35,19 +36,22 @@ import {
   UseFormReturn,
 } from 'react-hook-form';
 
-type UserFormProps<T extends FieldValues> = {
-  form: UseFormReturn<T>;
-  profileImg: File | null | string;
-  formInputs?: FormInput[];
-  // eslint-disable-next-line no-unused-vars
-  setProfileImg: (file: File | null | string) => void;
-};
+type UserFormProps<T extends FieldValues> =
+  React.HTMLAttributes<HTMLFormElement> & {
+    form: UseFormReturn<T>;
+    profileImg: File | null | string;
+    formInputs?: FormInput[];
+    // eslint-disable-next-line no-unused-vars
+    setProfileImg: (file: File | null | string) => void;
+  };
 
 const UserForm = <T extends FieldValues>({
   form,
   profileImg,
   formInputs = [],
   setProfileImg,
+  className,
+  ...props
 }: UserFormProps<T>) => {
   const {
     queryResult: { data, isLoading: isLoadingCategories },
@@ -56,7 +60,7 @@ const UserForm = <T extends FieldValues>({
 
   return (
     <Form {...form}>
-      <form className="px-2">
+      <form className={cn('px-2', className)} {...props}>
         <ImageUploaderProvider value={profileImg} onImageChange={setProfileImg}>
           <ImagePreview />
           <ImageUploader />

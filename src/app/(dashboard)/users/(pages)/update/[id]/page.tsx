@@ -1,4 +1,5 @@
 'use client';
+import FormSkeleton from '@/components/FormSkeleton';
 import {
   PageContent,
   PageDescription,
@@ -48,7 +49,7 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
     formState: { isValid, errors },
   } = form;
 
-  const { data } = useCustomQuery(
+  const { data, isLoading: isLoadingUser } = useCustomQuery(
     ['userDetails', [id]],
     () => UsersApi.getOne(id),
     {
@@ -81,7 +82,7 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
   });
 
   function onSubmit(values: z.infer<typeof UPDATE_USER_SCHEMA>) {
-    mutate({ id, user: values as Partial<User> });
+    mutate({ id, user: { ...values, profileImg } as Partial<User> });
   }
 
   const formInputs: FormInput[] = useMemo(
@@ -181,11 +182,19 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
         </Button>
       </PageHeader>
       <ScrollArea>
+        <FormSkeleton
+          className={cn({
+            hidden: !isLoadingUser,
+          })}
+        />
         <UserForm
           form={form}
           profileImg={profileImg}
           formInputs={formInputs}
           setProfileImg={setProfileImg}
+          className={cn({
+            hidden: isLoadingUser,
+          })}
         />
       </ScrollArea>
     </PageContent>
