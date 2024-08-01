@@ -71,3 +71,8 @@ export const USER_SCHEMA = z.object({
   phone: z.string().optional(),
   interests: z.array(z.string()).optional(),
 });
+
+export const LOGIN_SCHEMA = z.object({
+  email: z.string().email(),
+  password: z.string().min(1, 'Password must be at least 1 character long'),
+});
