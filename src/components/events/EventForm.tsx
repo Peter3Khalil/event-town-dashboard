@@ -39,6 +39,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Capitalize, formatDate } from '@/lib/utils';
+import { Event } from '@/types/event.types';
 
 type EventFormProps<T extends FieldValues> = {
   form: UseFormReturn<T>;
@@ -135,13 +136,19 @@ const EventForm = <T extends FieldValues>({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      {['free', 'basic', 'standard', 'premium'].map(
-                        (plan, index) => (
-                          <SelectItem key={index} value={plan}>
-                            {Capitalize(plan)}
-                          </SelectItem>
-                        ),
-                      )}
+                      {(
+                        [
+                          'free',
+                          'basic',
+                          'standard',
+                          'pro',
+                          'premium',
+                        ] as Event['organizerPlan'][]
+                      ).map((plan, index) => (
+                        <SelectItem key={index} value={plan}>
+                          {Capitalize(plan)}
+                        </SelectItem>
+                      ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>

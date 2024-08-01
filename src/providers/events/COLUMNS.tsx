@@ -12,12 +12,12 @@ import EventsApi from '@/services/EventsApi';
 import type { EventStatusWithOutAll, Event } from '@/types/event.types';
 import { ColumnDef } from '@tanstack/react-table';
 
-type EventStatusesComponentType = Record<
+type EventStatusesBadgeType = Record<
   EventStatusWithOutAll,
   { component: JSX.Element }
 >;
 
-export const EVENT_STATUSES_COMPONENTS: EventStatusesComponentType = {
+const EVENT_STATUSES_BADGES: EventStatusesBadgeType = {
   rejected: {
     component: (
       <Badge className="capitalize" variant={'destructive'}>
@@ -41,6 +41,34 @@ export const EVENT_STATUSES_COMPONENTS: EventStatusesComponentType = {
   },
 };
 
+const PLAN_BADGES: Record<Event['organizerPlan'], JSX.Element> = {
+  free: (
+    <Badge className="capitalize" variant={'outline'}>
+      <p className="text-[12px] font-normal">Free</p>
+    </Badge>
+  ),
+  basic: (
+    <Badge className="capitalize" variant={'secondary'}>
+      <p className="text-[12px] font-normal">Basic</p>
+    </Badge>
+  ),
+  premium: (
+    <Badge className="capitalize">
+      <p className="text-[12px] font-normal">Premium</p>
+    </Badge>
+  ),
+  standard: (
+    <Badge className="capitalize" variant={'secondary'}>
+      <p className="text-[12px] font-normal">Standard</p>
+    </Badge>
+  ),
+  pro: (
+    <Badge className="bg-primary capitalize">
+      <p className="text-[12px] font-normal">Pro</p>
+    </Badge>
+  ),
+};
+
 export const COLUMNS: ColumnDef<Event>[] = [
   {
     id: 'select',
@@ -60,6 +88,16 @@ export const COLUMNS: ColumnDef<Event>[] = [
     accessorKey: 'eventName',
     header: 'Name',
     cell: ({ row }) => <EventComponent event={row.original} />,
+  },
+  {
+    id: 'Plan',
+    accessorKey: 'organizerPlan',
+    header: 'Plan',
+    cell: ({
+      row: {
+        original: { organizerPlan },
+      },
+    }) => PLAN_BADGES[organizerPlan],
   },
   {
     id: 'Date',
@@ -88,7 +126,7 @@ export const COLUMNS: ColumnDef<Event>[] = [
     header: () => <StatusFiltration />,
     cell: ({ getValue }) => {
       const status: EventStatusWithOutAll = getValue() as EventStatusWithOutAll;
-      return EVENT_STATUSES_COMPONENTS[status].component;
+      return EVENT_STATUSES_BADGES[status].component;
     },
   },
   {

@@ -7,7 +7,7 @@ export type Event = {
   organizer: Organizer;
   organizationName: string;
   organizationWebsite?: string;
-  organizerPlan: 'free' | 'basic' | 'standard' | 'premium';
+  organizerPlan: 'free' | 'basic' | 'pro' | 'standard' | 'premium';
   eventName: string;
   eventAddress?: string;
   eventCategory: EventCategory;
