@@ -48,9 +48,9 @@ const CreateUser = () => {
   } = form;
 
   const { mutate, isLoading } = useMutation(UsersApi.create, {
-    onSuccess() {
+    onSuccess(data) {
       queryClient.invalidateQueries('users');
-      router.push('/users');
+      router.push(`/users/${data.data.data._id}`);
     },
     onError(err) {
       const error = err as AxiosError<ValidationError>;

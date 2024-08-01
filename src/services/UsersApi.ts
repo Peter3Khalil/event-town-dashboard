@@ -1,4 +1,5 @@
 import client from '@/lib/client';
+import { convertObjToFormData } from '@/lib/utils';
 import { GetAllQueryParams } from '@/types/global.types';
 import {
   GetAllUsersResponse,
@@ -40,19 +41,8 @@ class UsersApi {
   }
 
   public create(user: MutateUser, config?: AxiosRequestConfig) {
-    const formData = new FormData();
-
-    for (const [key, value] of Object.entries(user)) {
-      if (Array.isArray(value)) {
-        for (const item of value) {
-          formData.append(key, item as unknown as string);
-        }
-      } else if (value !== undefined && value !== null) {
-        formData.append(key, value as string | File);
-      }
-    }
-
-    return client.post<User>('/users', formData, config);
+    const formData = convertObjToFormData(user);
+    return client.post<{ data: User }>('/users', formData, config);
   }
 
   public updateUser(
@@ -62,11 +52,9 @@ class UsersApi {
     },
     config?: AxiosRequestConfig,
   ) {
-    return client.put<User>(
-      `/users/${updatedUser.id}`,
-      updatedUser.user,
-      config,
-    );
+    const { user } = updatedUser;
+    const formData = convertObjToFormData(user);
+    return client.put<User>(`/users/${updatedUser.id}`, formData, config);
   }
 
   public updateMyData(user: Partial<MutateUser>, config?: AxiosRequestConfig) {

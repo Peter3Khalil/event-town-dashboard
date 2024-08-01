@@ -78,7 +78,7 @@ const CreateEvent = () => {
   });
 
   function onSubmit(values: z.infer<typeof CREATE_EVENT_SCHEMA>) {
-    mutate(values as unknown as AddEventType);
+    mutate({ ...values, eventImage: image } as unknown as AddEventType);
   }
 
   const formInputs: MyFormInput[] = useMemo(

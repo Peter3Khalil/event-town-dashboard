@@ -117,9 +117,12 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
 
   const onSubmit = useCallback(
     (values: z.infer<typeof UPDATE_EVENT_SCHEMA>) => {
-      mutate({ id, event: values as unknown as Partial<Event> });
+      mutate({
+        id,
+        event: { ...values, eventImage: image } as unknown as Partial<Event>,
+      });
     },
-    [id, mutate],
+    [id, image, mutate],
   );
 
   const formInputs: MyFormInput[] = useMemo(

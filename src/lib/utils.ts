@@ -101,3 +101,19 @@ export const getNextDay = (date?: Date | string) => {
 
   return new Date(dateObj.setDate(dateObj.getDate() + 1));
 };
+
+export const convertObjToFormData = (obj: object) => {
+  const formData = new FormData();
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        formData.append(key, item as unknown as string);
+      }
+    } else if (value !== undefined && value !== null) {
+      formData.append(key, value as string | File);
+    }
+  }
+
+  return formData;
+};

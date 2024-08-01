@@ -1,4 +1,5 @@
 import client from '@/lib/client';
+import { convertObjToFormData } from '@/lib/utils';
 import {
   EventsQueryParams,
   GetAllEventsResponse,
@@ -40,7 +41,9 @@ class EventsApi {
   }
 
   public create(event: AddEventType, config?: AxiosRequestConfig) {
-    return client.post<Event>('/events', event, config);
+    const formData = convertObjToFormData(event);
+
+    return client.post<Event>('/events', formData, config);
   }
 
   public update(
@@ -48,7 +51,9 @@ class EventsApi {
     config?: AxiosRequestConfig,
   ) {
     const { id, event } = updatedEvent;
-    return client.put<Event>(`/events/${id}`, event, config);
+    const formData = convertObjToFormData(event);
+
+    return client.put<Event>(`/events/${id}`, formData, config);
   }
 
   public delete(id: string, config?: AxiosRequestConfig) {
