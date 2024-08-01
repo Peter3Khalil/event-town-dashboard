@@ -19,7 +19,8 @@ import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import UsersApi from '@/services/UsersApi';
 import { User } from '@/types/users.types';
 import Link from 'next/link';
-import { FC, useEffect } from 'react';
+import { notFound, useRouter } from 'next/navigation';
+import { FC, useEffect, useState } from 'react';
 
 interface UserDetailsProps {
   params: {
@@ -28,6 +29,8 @@ interface UserDetailsProps {
 }
 
 const UserDetails: FC<UserDetailsProps> = ({ params: { id } }) => {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
   const { data, isError, isLoading } = useCustomQuery(
     ['user', id],
     () => UsersApi.getOne(id),
@@ -45,7 +48,7 @@ const UserDetails: FC<UserDetailsProps> = ({ params: { id } }) => {
       document.title = user.name + ' | Admin Dashboard';
     }
   }, [user]);
-  if (isError) return <div>Failed to load user</div>;
+  if (isError) notFound();
   return (
     <PageContent className="items-center pb-4">
       {isLoading || !user ? (
@@ -57,7 +60,7 @@ const UserDetails: FC<UserDetailsProps> = ({ params: { id } }) => {
             <Button variant="outline" asChild>
               <Link href={`/users/update/${user?._id}`}>Update</Link>
             </Button>
-            <AlertDialog>
+            <AlertDialog open={open} onOpenChange={setOpen}>
               <AlertDialogTrigger asChild>
                 <Button variant={'destructive'}>Delete</Button>
               </AlertDialogTrigger>
@@ -74,6 +77,10 @@ const UserDetails: FC<UserDetailsProps> = ({ params: { id } }) => {
                   <DeleteButton
                     invalidateKey="users"
                     deleteFunction={UsersApi.delete}
+                    onSuccess={() => {
+                      setOpen(false);
+                      router.push('/users');
+                    }}
                     model={user as unknown as User}
                   >
                     Delete

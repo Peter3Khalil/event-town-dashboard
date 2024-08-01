@@ -13,6 +13,7 @@ interface DeleteButtonProps<TData extends { _id: string }>
     config?: AxiosRequestConfig,
   ) => Promise<AxiosResponse<any, any>>;
   invalidateKey?: string;
+  onSuccess?: () => void;
 }
 
 const DeleteButton = <TData extends { _id: string }>({
@@ -20,10 +21,12 @@ const DeleteButton = <TData extends { _id: string }>({
   deleteFunction,
   invalidateKey,
   children,
+  onSuccess,
   ...props
 }: DeleteButtonProps<TData>) => {
   const queryClient = useQueryClient();
   const { mutate, isLoading } = useMutation(deleteFunction, {
+    onSuccess,
     onSettled: () => {
       if (invalidateKey) queryClient.invalidateQueries(invalidateKey);
     },
@@ -40,7 +43,7 @@ const DeleteButton = <TData extends { _id: string }>({
       disabled={isLoading}
       {...props}
     >
-      {children}
+      {isLoading ? `${children}...` : children}
     </Button>
   );
 };
