@@ -1,3 +1,4 @@
+import { isInFuture, isValidDate } from '@/lib/utils';
 import { z } from 'zod';
 
 export const EVENT_SCHEMA = z.object({
@@ -25,27 +26,27 @@ export const EVENT_SCHEMA = z.object({
   }),
   eventDate: z
     .string()
-    .refine((date) => {
-      return new Date(date) instanceof Date && !isNaN(new Date(date).getTime());
+    .refine((date) => isValidDate(date), {
+      message: 'Invalid date',
     })
-    .refine((date) => new Date(date).getTime() > Date.now(), {
+    .refine((date) => isInFuture(date), {
       message: 'Start time must be in the future',
     }),
   eventStartTime: z
     .string()
-    .refine((date) => {
-      return new Date(date) instanceof Date && !isNaN(new Date(date).getTime());
+    .refine((date) => isValidDate(date), {
+      message: 'Invalid date',
     })
-    .refine((date) => new Date(date).getTime() > Date.now(), {
+    .refine((date) => isInFuture(date), {
       message: 'Start time must be in the future',
     })
     .transform((val) => (val.length > 0 ? new Date(val).toISOString() : '')),
   eventEndTime: z
     .string()
-    .refine((date) => {
-      return new Date(date) instanceof Date && !isNaN(new Date(date).getTime());
+    .refine((date) => isValidDate(date), {
+      message: 'Invalid date',
     })
-    .refine((date) => new Date(date).getTime() > Date.now(), {
+    .refine((date) => isInFuture(date), {
       message: 'Start time must be in the future',
     })
     .transform((val) => (val.length > 0 ? new Date(val).toISOString() : '')),

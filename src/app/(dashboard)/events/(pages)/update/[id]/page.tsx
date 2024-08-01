@@ -13,6 +13,10 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { EVENT_SCHEMA } from '@/constants/formSchemas';
 import useCustomQuery from '@/hooks/useCustomQuery';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
+import {
+  isStartTimeAndStartDateTheSame,
+  isStartTimeSmallerThanEndTime,
+} from '@/lib/refineEventSchema';
 import { cn, formatDate } from '@/lib/utils';
 import EventsApi from '@/services/EventsApi';
 import { Event } from '@/types/event.types';
@@ -25,32 +29,40 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import { z } from 'zod';
 
+const DEFAULT_VALUES: z.infer<typeof EVENT_SCHEMA> = {
+  eventAddress: '',
+  eventDescription: '',
+  organizerPlan: 'free',
+  eventLocation: '',
+  eventPrice: 0,
+  eventName: '',
+  eventPlace: '',
+  ticketEventLink: '',
+  organizerName: '',
+  organizationName: '',
+  organizationPhoneNumber: '',
+  organizationEmail: '',
+  organizationWebsite: '',
+  eventDate: formatDate(new Date().toString()),
+  eventStartTime: formatDate(new Date().toISOString(), 'YYYY-mm-ddTHH:MM'),
+  eventEndTime: formatDate(new Date().toISOString(), 'YYYY-mm-ddTHH:MM'),
+  eventCategory: [],
+};
+
 type UpdateEventProps = {
   params: {
     id: string;
   };
 };
 const UPDATE_EVENT_SCHEMA = EVENT_SCHEMA.omit({ eventCategory: true })
-  .refine(
-    (data) =>
-      new Date(data.eventStartTime).getTime() <
-      new Date(data.eventEndTime).getTime(),
-    {
-      message: 'Event end time must be after event start time',
-      path: ['eventEndTime'],
-    },
-  )
-  .refine(
-    (data) => {
-      const startDate = new Date(data.eventDate).toString();
-      const startDateTime = new Date(data.eventStartTime).toString();
-      return formatDate(startDate) === formatDate(startDateTime);
-    },
-    {
-      message: 'Event start time must be on the same day as the event date',
-      path: ['eventStartTime'],
-    },
-  );
+  .refine(isStartTimeSmallerThanEndTime, {
+    message: 'Event end time must be after event start time',
+    path: ['eventEndTime'],
+  })
+  .refine(isStartTimeAndStartDateTheSame, {
+    message: 'Event start time must be on the same day as the event date',
+    path: ['eventStartTime'],
+  });
 
 type MyFormInput = FormInput & {
   name: keyof z.infer<typeof UPDATE_EVENT_SCHEMA>;
@@ -58,7 +70,7 @@ type MyFormInput = FormInput & {
 
 const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
   useSetBreadcrumb({
-    breadcrumbPath: '/dashboard/Events/Update',
+    breadcrumbPath: '/dashboard/events/Update',
   });
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -103,9 +115,12 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof UPDATE_EVENT_SCHEMA>) {
-    mutate({ id, event: values as unknown as Partial<Event> });
-  }
+  const onSubmit = useCallback(
+    (values: z.infer<typeof UPDATE_EVENT_SCHEMA>) => {
+      mutate({ id, event: values as unknown as Partial<Event> });
+    },
+    [id, mutate],
+  );
 
   const formInputs: MyFormInput[] = useMemo(
     () => [
@@ -193,23 +208,12 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
     ],
     [],
   );
+
   const initializeForm = useCallback(() => {
     if (eventDetails) {
       form.reset({
-        eventAddress: eventDetails.eventAddress,
-        eventDescription: eventDetails.eventDescription,
-        organizerPlan: eventDetails.organizerPlan,
-        eventLocation: eventDetails.eventLocation,
+        ...eventDetails,
         eventPrice: (eventDetails.eventPrice + '') as unknown as number,
-        eventName: eventDetails.eventName,
-        // eventCategory: eventDetails.eventCategory.map((c) => c._id),
-        eventPlace: eventDetails.eventPlace,
-        ticketEventLink: eventDetails.ticketEventLink,
-        organizerName: eventDetails.organizerName,
-        organizationName: eventDetails.organizationName,
-        organizationPhoneNumber: eventDetails.organizationPhoneNumber,
-        organizationEmail: eventDetails.organizationEmail,
-        organizationWebsite: eventDetails.organizationWebsite,
         eventDate: formatDate(eventDetails.eventDate),
         eventStartTime: formatDate(
           eventDetails.eventStartTime,
@@ -220,32 +224,46 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
       setImage(eventDetails?.eventImage ?? null);
     }
   }, [eventDetails, form]);
+
   const resetForm = useCallback(() => {
-    form.reset({
-      eventAddress: '',
-      eventDescription: '',
-      organizerPlan: 'free',
-      eventLocation: '',
-      eventPrice: 0,
-      eventName: '',
-      // eventCategory: [],
-      eventPlace: '',
-      ticketEventLink: '',
-      organizerName: '',
-      organizationName: '',
-      organizationPhoneNumber: '',
-      organizationEmail: '',
-      organizationWebsite: '',
-      eventDate: formatDate(new Date().toString()),
-      eventStartTime: formatDate(new Date().toISOString(), 'YYYY-mm-ddTHH:MM'),
-      eventEndTime: formatDate(new Date().toISOString(), 'YYYY-mm-ddTHH:MM'),
-    });
+    form.reset(DEFAULT_VALUES);
     setImage(null);
   }, [form]);
 
   useEffect(() => {
     initializeForm();
   }, [initializeForm]);
+
+  const UpdateButton = useMemo(
+    () => (
+      <Button
+        type="button"
+        onClick={form.handleSubmit(onSubmit)}
+        disabled={!isValid || isLoading}
+      >
+        {isLoading ? 'Updating...' : 'Update'}
+      </Button>
+    ),
+    [isValid, isLoading, form, onSubmit],
+  );
+
+  const DiscardButton = useMemo(
+    () => (
+      <Button onClick={initializeForm} variant={'secondary'}>
+        Discard
+      </Button>
+    ),
+    [initializeForm],
+  );
+
+  const ClearButton = useMemo(
+    () => (
+      <Button onClick={resetForm} variant={'outline'}>
+        Clear form
+      </Button>
+    ),
+    [resetForm],
+  );
 
   return (
     <PageContent
@@ -272,34 +290,10 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
           </div>
           <PageDescription>Update the event details below</PageDescription>
         </div>
-        <div className="item flex flex-col gap-2 md:flex-row">
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              form.handleSubmit(onSubmit)();
-            }}
-            disabled={!isValid || isLoading}
-          >
-            {isLoading ? 'Updating...' : 'Update'}
-          </Button>
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              initializeForm();
-            }}
-            variant={'secondary'}
-          >
-            Discard
-          </Button>
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              resetForm();
-            }}
-            variant={'outline'}
-          >
-            Clear form
-          </Button>
+        <div className="item hidden flex-col gap-2 md:flex md:flex-row">
+          {UpdateButton}
+          {DiscardButton}
+          {ClearButton}
         </div>
       </PageHeader>
       <ScrollArea>
@@ -310,6 +304,11 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
           setEventImage={setImage}
         />
       </ScrollArea>
+      <div className="flex justify-center gap-2 border-t py-2 md:hidden">
+        {UpdateButton}
+        {DiscardButton}
+        {ClearButton}
+      </div>
     </PageContent>
   );
 };

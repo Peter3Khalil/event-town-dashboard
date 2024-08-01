@@ -12,7 +12,11 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { EVENT_SCHEMA } from '@/constants/formSchemas';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
-import { cn, formatDate } from '@/lib/utils';
+import {
+  isStartTimeAndStartDateTheSame,
+  isStartTimeSmallerThanEndTime,
+} from '@/lib/refineEventSchema';
+import { cn } from '@/lib/utils';
 import EventsApi from '@/services/EventsApi';
 import { AddEventType } from '@/types/event.types';
 import { FormInput, ValidationError } from '@/types/global.types';
@@ -24,25 +28,13 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import { z } from 'zod';
 
-const CREATE_EVENT_SCHEMA = EVENT_SCHEMA.refine(
-  (data) =>
-    new Date(data.eventStartTime).getTime() <
-    new Date(data.eventEndTime).getTime(),
-  {
-    message: 'Event end time must be after event start time',
-    path: ['eventEndTime'],
-  },
-).refine(
-  (data) => {
-    const startDate = new Date(data.eventDate).toString();
-    const startDateTime = new Date(data.eventStartTime).toString();
-    return formatDate(startDate) === formatDate(startDateTime);
-  },
-  {
-    message: 'Event start time must be on the same day as the event date',
-    path: ['eventStartTime'],
-  },
-);
+const CREATE_EVENT_SCHEMA = EVENT_SCHEMA.refine(isStartTimeSmallerThanEndTime, {
+  message: 'Event end time must be after event start time',
+  path: ['eventEndTime'],
+}).refine(isStartTimeAndStartDateTheSame, {
+  message: 'Event start time must be on the same day as the event date',
+  path: ['eventStartTime'],
+});
 
 type MyFormInput = FormInput & {
   name: keyof z.infer<typeof EVENT_SCHEMA>;
@@ -60,7 +52,7 @@ const CreateEvent = () => {
     mode: 'onChange',
   });
   const {
-    formState: { isValid, errors },
+    formState: { isValid },
   } = form;
 
   const { mutate, isLoading } = useMutation(EventsApi.create, {
@@ -186,7 +178,7 @@ const CreateEvent = () => {
         <div>
           <div className="flex items-center gap-2">
             <PageTitle>Create Event</PageTitle>
-            {Object.keys(errors).length > 0 && (
+            {!isValid && (
               <MyTooltip
                 className="bg-destructive"
                 content={

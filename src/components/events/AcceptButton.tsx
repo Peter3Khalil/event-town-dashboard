@@ -1,6 +1,7 @@
 import {
   CustomDialog,
   CustomDialogContent,
+  CustomDialogDescription,
   CustomDialogFooter,
   CustomDialogHeader,
   CustomDialogTitle,
@@ -18,7 +19,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { formatDate } from '@/lib/utils';
+import { formatDate, getNextDay, isInFuture, isValidDate } from '@/lib/utils';
 import EventsApi from '@/services/EventsApi';
 import { Event } from '@/types/event.types';
 import { ResponseError } from '@/types/global.types';
@@ -30,9 +31,14 @@ import { useMutation, useQueryClient } from 'react-query';
 import { z } from 'zod';
 
 const formSchema = z.object({
-  expirePlanDate: z.string().refine((date) => {
-    return new Date(date) instanceof Date && !isNaN(new Date(date).getTime());
-  }),
+  expirePlanDate: z
+    .string()
+    .refine((date) => isValidDate(date), {
+      message: 'Invalid date',
+    })
+    .refine((date) => isInFuture(date), {
+      message: 'Expire date must be in the future',
+    }),
 });
 
 interface AcceptButtonProps extends React.ComponentProps<typeof Button> {
@@ -75,7 +81,7 @@ const AcceptButton: FC<AcceptButtonProps> = ({ event, ...props }) => {
 
   useEffect(() => {
     if (open) {
-      form.reset({ expirePlanDate: formatDate(new Date().toString()) });
+      form.reset({ expirePlanDate: formatDate(getNextDay()) });
     }
   }, [form, open]);
 
@@ -123,6 +129,9 @@ const AcceptButton: FC<AcceptButtonProps> = ({ event, ...props }) => {
           <CustomDialogTitle className="capitalize">
             Expire date of Plan
           </CustomDialogTitle>
+          <CustomDialogDescription>
+            Choose future date to expire the plan
+          </CustomDialogDescription>
         </CustomDialogHeader>
         <Form {...form}>
           <form className="p-4">
@@ -136,7 +145,7 @@ const AcceptButton: FC<AcceptButtonProps> = ({ event, ...props }) => {
                   <FormControl>
                     <Input
                       type="date"
-                      min={formatDate(new Date().toString())}
+                      min={formatDate(getNextDay())}
                       {...field}
                     />
                   </FormControl>

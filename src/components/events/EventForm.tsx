@@ -40,6 +40,7 @@ import {
 } from '@/components/ui/select';
 import { Capitalize, formatDate } from '@/lib/utils';
 import { Event } from '@/types/event.types';
+import { useMemo } from 'react';
 
 type EventFormProps<T extends FieldValues> = {
   form: UseFormReturn<T>;
@@ -59,6 +60,23 @@ const EventForm = <T extends FieldValues>({
     queryResult: { data, isLoading: isLoadingCategories },
   } = useCategories();
   const categories = data?.data.data;
+
+  const datesInputs = useMemo(
+    () =>
+      formInputs.filter(
+        (input) => input.type === 'datetime-local' || input.type === 'date',
+      ),
+    [formInputs],
+  );
+
+  const formInputsWithoutDates = useMemo(
+    () =>
+      formInputs.filter(
+        (input) => input.type !== 'datetime-local' && input.type !== 'date',
+      ),
+    [formInputs],
+  );
+
   return (
     <Form {...form}>
       <form className="px-2">
@@ -67,8 +85,24 @@ const EventForm = <T extends FieldValues>({
           <ImageUploader />
         </ImageUploaderProvider>
         <FormLayout>
-          {formInputs.map((input, index) =>
-            input.type === 'datetime-local' || input.type === 'date' ? (
+          {formInputsWithoutDates.map((input, index) => (
+            <FormField
+              key={index}
+              control={form.control}
+              name={input.name as Path<T>}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="capitalize">{input.label}</FormLabel>
+                  <FormControl>
+                    <Input {...input} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+          <div className="flex flex-col gap-6">
+            {datesInputs.map((input, index) => (
               <FormField
                 key={index}
                 control={form.control}
@@ -94,23 +128,8 @@ const EventForm = <T extends FieldValues>({
                   </FormItem>
                 )}
               />
-            ) : (
-              <FormField
-                key={index}
-                control={form.control}
-                name={input.name as Path<T>}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="capitalize">{input.label}</FormLabel>
-                    <FormControl>
-                      <Input {...input} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ),
-          )}
+            ))}
+          </div>
           <div className="flex flex-col gap-1">
             <Label>Plan</Label>
             <Controller

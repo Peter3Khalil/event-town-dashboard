@@ -15,14 +15,19 @@ export const Capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
+export const isValidDate = (date: Date | string) => {
+  const dateObj = new Date(date);
+  return dateObj instanceof Date && !isNaN(dateObj.getTime());
+};
+
 export const formatDate = (
-  date: string,
-  matcher: string = 'YYYY-mm-dd',
+  date: string | Date,
+  matcher: 'YYYY-mm-ddTHH:MM' | 'YYYY-mm-dd' = 'YYYY-mm-dd',
 ): string => {
   const dateObj = new Date(date);
 
-  if (isNaN(dateObj.getTime())) {
-    throw new Error('Invalid date format');
+  if (!isValidDate(dateObj)) {
+    return 'Invalid date format';
   }
 
   const year = dateObj.getFullYear();
@@ -42,4 +47,57 @@ export const formatDate = (
     .replace('ss', seconds);
 
   return formattedDate;
+};
+
+export const isInFuture = (date: Date | string) => {
+  if (!isValidDate(date)) {
+    return 'Invalid date format';
+  }
+
+  return new Date(date).getTime() > Date.now();
+};
+
+export const isSameDate = (date1: Date | string, date2: Date | string) => {
+  const firstDate = new Date(date1);
+  const secondDate = new Date(date2);
+
+  if (!isValidDate(firstDate) || !isValidDate(secondDate)) {
+    return 'Invalid date format';
+  }
+
+  return firstDate.toDateString() === secondDate.toDateString();
+};
+
+export const maxDate = (dates: (Date | string)[]) => {
+  const dateObjects = dates.map((date) => new Date(date));
+
+  if (dateObjects.some((date) => !isValidDate(date))) {
+    return 'Invalid date format';
+  }
+
+  return new Date(Math.max(...dateObjects.map((date) => date.getTime())));
+};
+
+export const minDate = (...dates: (Date | string)[]) => {
+  const dateObjects = dates.map((date) => new Date(date));
+
+  if (dateObjects.some((date) => !isValidDate(date))) {
+    return 'Invalid date format';
+  }
+
+  return new Date(Math.min(...dateObjects.map((date) => date.getTime())));
+};
+
+export const getNextDay = (date?: Date | string) => {
+  if (!date) {
+    return new Date(new Date().setDate(new Date().getDate() + 1));
+  }
+
+  const dateObj = new Date(date);
+
+  if (!isValidDate(dateObj)) {
+    return 'Invalid date format';
+  }
+
+  return new Date(dateObj.setDate(dateObj.getDate() + 1));
 };
