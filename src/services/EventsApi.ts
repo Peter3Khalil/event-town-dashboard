@@ -55,8 +55,16 @@ class EventsApi {
     return client.delete(`/events/${id}`, config);
   }
 
-  public accept(id: string, config?: AxiosRequestConfig) {
-    return client.put<EventAction>(`/events/${id}/accept`, config);
+  public accept(
+    payload: { id: string; expirePlanDate?: string | Date },
+    config?: AxiosRequestConfig,
+  ) {
+    const expirePlanDate = payload.expirePlanDate;
+    return client.put<EventAction>(
+      `/events/${payload.id}/accept`,
+      { expirePlanDate },
+      config,
+    );
   }
 
   public reject(id: string, config?: AxiosRequestConfig) {
