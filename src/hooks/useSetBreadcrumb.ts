@@ -13,7 +13,7 @@ const useSetBreadcrumb = ({ breadcrumbPath = '/' }: UseSetBreadcrumbProps) => {
     setBreadcrumbItems(
       items.map((item) => ({
         name: item,
-        link: `/${item}`,
+        link: `/${item.toLowerCase()}`,
       })),
     );
   }, [breadcrumbPath, setBreadcrumbItems, setBreadcrumbPage]);
