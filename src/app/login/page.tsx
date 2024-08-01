@@ -1,5 +1,6 @@
 'use client';
 
+import { FORM_FIELDS, FORM_SCHEMA } from '@/app/login/constants/FORM_FIELDS';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -17,23 +18,18 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { LOGIN_SCHEMA } from '@/constants/formSchemas';
 import UsersApi from '@/services/UsersApi';
-import { FormInput, ResponseError } from '@/types/global.types';
+import { ResponseError } from '@/types/global.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { z } from 'zod';
 
-type LoginFormInput = FormInput & {
-  name: keyof z.infer<typeof LOGIN_SCHEMA>;
-};
-
 function Login() {
-  const form = useForm<z.infer<typeof LOGIN_SCHEMA>>({
-    resolver: zodResolver(LOGIN_SCHEMA),
+  const form = useForm<z.infer<typeof FORM_SCHEMA>>({
+    resolver: zodResolver(FORM_SCHEMA),
     defaultValues: {
       email: '',
       password: '',
@@ -61,30 +57,12 @@ function Login() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof LOGIN_SCHEMA>) => {
+  const onSubmit = (values: z.infer<typeof FORM_SCHEMA>) => {
     mutate({ ...values });
   };
 
-  const formInputs: LoginFormInput[] = useMemo(
-    () => [
-      {
-        name: 'email',
-        label: 'Email',
-        placeholder: 'example@gmail.com',
-        type: 'email',
-      },
-      {
-        name: 'password',
-        label: 'password',
-        placeholder: '',
-        type: 'password',
-      },
-    ],
-    [],
-  );
-
   useEffect(() => {
-    localStorage.removeItem('token');
+    localStorage.clear();
   }, []);
 
   return (
@@ -103,16 +81,18 @@ function Login() {
       <CardContent>
         <Form {...form}>
           <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
-            {formInputs.map((input) => (
+            {FORM_FIELDS.map((FORM_FIELD) => (
               <FormField
-                key={input.name}
+                key={FORM_FIELD.name}
                 control={form.control}
-                name={input.name}
+                name={FORM_FIELD.name}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="capitalize">{input.label}</FormLabel>
+                    <FormLabel className="capitalize">
+                      {FORM_FIELD.label}
+                    </FormLabel>
                     <FormControl>
-                      <Input {...input} {...field} />
+                      <Input {...FORM_FIELD} {...field} />
                     </FormControl>
                     <FormMessage className="text-xs" />
                   </FormItem>
