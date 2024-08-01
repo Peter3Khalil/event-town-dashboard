@@ -11,62 +11,80 @@ import MyTooltip from '@/components/shared/MyTooltip';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { EVENT_SCHEMA } from '@/constants/formSchemas';
+import useCustomQuery from '@/hooks/useCustomQuery';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { cn, formatDate } from '@/lib/utils';
 import EventsApi from '@/services/EventsApi';
-import { AddEventType } from '@/types/event.types';
+import { Event } from '@/types/event.types';
 import { FormInput, ValidationError } from '@/types/global.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import { z } from 'zod';
 
-const CREATE_EVENT_SCHEMA = EVENT_SCHEMA.refine(
-  (data) =>
-    new Date(data.eventStartTime).getTime() <
-    new Date(data.eventEndTime).getTime(),
-  {
-    message: 'Event end time must be after event start time',
-    path: ['eventEndTime'],
-  },
-).refine(
-  (data) => {
-    const startDate = new Date(data.eventDate).toString();
-    const startDateTime = new Date(data.eventStartTime).toString();
-    return formatDate(startDate) === formatDate(startDateTime);
-  },
-  {
-    message: 'Event start time must be on the same day as the event date',
-    path: ['eventStartTime'],
-  },
-);
+type UpdateEventProps = {
+  params: {
+    id: string;
+  };
+};
+const UPDATE_EVENT_SCHEMA = EVENT_SCHEMA.omit({ eventCategory: true })
+  .refine(
+    (data) =>
+      new Date(data.eventStartTime).getTime() <
+      new Date(data.eventEndTime).getTime(),
+    {
+      message: 'Event end time must be after event start time',
+      path: ['eventEndTime'],
+    },
+  )
+  .refine(
+    (data) => {
+      const startDate = new Date(data.eventDate).toString();
+      const startDateTime = new Date(data.eventStartTime).toString();
+      return formatDate(startDate) === formatDate(startDateTime);
+    },
+    {
+      message: 'Event start time must be on the same day as the event date',
+      path: ['eventStartTime'],
+    },
+  );
 
 type MyFormInput = FormInput & {
-  name: keyof z.infer<typeof EVENT_SCHEMA>;
+  name: keyof z.infer<typeof UPDATE_EVENT_SCHEMA>;
 };
 
-const CreateEvent = () => {
+const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
   useSetBreadcrumb({
-    breadcrumbPath: '/dashboard/Events/Create',
+    breadcrumbPath: '/dashboard/Events/Update',
   });
   const queryClient = useQueryClient();
   const router = useRouter();
   const [image, setImage] = useState<File | null | string>(null);
-  const form = useForm<z.infer<typeof CREATE_EVENT_SCHEMA>>({
-    resolver: zodResolver(CREATE_EVENT_SCHEMA),
+  const form = useForm<z.infer<typeof UPDATE_EVENT_SCHEMA>>({
+    resolver: zodResolver(UPDATE_EVENT_SCHEMA),
     mode: 'onChange',
   });
   const {
     formState: { isValid, errors },
   } = form;
 
-  const { mutate, isLoading } = useMutation(EventsApi.create, {
+  const { data } = useCustomQuery(
+    ['eventDetails', [id]],
+    () => EventsApi.getOne(id),
+    {
+      cacheTime: 0,
+    },
+  );
+
+  const eventDetails = useMemo(() => data?.data.data, [data?.data.data]);
+
+  const { mutate, isLoading } = useMutation(EventsApi.update, {
     onSuccess() {
       queryClient.invalidateQueries('events');
-      router.push('/events');
+      router.push(`/events/${id}`);
     },
     onError(err) {
       const error = err as AxiosError<ValidationError>;
@@ -75,7 +93,7 @@ const CreateEvent = () => {
         const errors = error.response.data.errors;
         errors.map((e) => {
           form.setError(
-            e.path as unknown as keyof z.infer<typeof CREATE_EVENT_SCHEMA>,
+            e.path as unknown as keyof z.infer<typeof UPDATE_EVENT_SCHEMA>,
             {
               message: e.msg,
             },
@@ -85,8 +103,8 @@ const CreateEvent = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof CREATE_EVENT_SCHEMA>) {
-    mutate(values as unknown as AddEventType);
+  function onSubmit(values: z.infer<typeof UPDATE_EVENT_SCHEMA>) {
+    mutate({ id, event: values as unknown as Partial<Event> });
   }
 
   const formInputs: MyFormInput[] = useMemo(
@@ -175,6 +193,59 @@ const CreateEvent = () => {
     ],
     [],
   );
+  const initializeForm = useCallback(() => {
+    if (eventDetails) {
+      form.reset({
+        eventAddress: eventDetails.eventAddress,
+        eventDescription: eventDetails.eventDescription,
+        organizerPlan: eventDetails.organizerPlan,
+        eventLocation: eventDetails.eventLocation,
+        eventPrice: (eventDetails.eventPrice + '') as unknown as number,
+        eventName: eventDetails.eventName,
+        // eventCategory: eventDetails.eventCategory.map((c) => c._id),
+        eventPlace: eventDetails.eventPlace,
+        ticketEventLink: eventDetails.ticketEventLink,
+        organizerName: eventDetails.organizerName,
+        organizationName: eventDetails.organizationName,
+        organizationPhoneNumber: eventDetails.organizationPhoneNumber,
+        organizationEmail: eventDetails.organizationEmail,
+        organizationWebsite: eventDetails.organizationWebsite,
+        eventDate: formatDate(eventDetails.eventDate),
+        eventStartTime: formatDate(
+          eventDetails.eventStartTime,
+          'YYYY-mm-ddTHH:MM',
+        ),
+        eventEndTime: formatDate(eventDetails.eventEndTime, 'YYYY-mm-ddTHH:MM'),
+      });
+      setImage(eventDetails?.eventImage ?? null);
+    }
+  }, [eventDetails, form]);
+  const resetForm = useCallback(() => {
+    form.reset({
+      eventAddress: '',
+      eventDescription: '',
+      organizerPlan: 'free',
+      eventLocation: '',
+      eventPrice: 0,
+      eventName: '',
+      // eventCategory: [],
+      eventPlace: '',
+      ticketEventLink: '',
+      organizerName: '',
+      organizationName: '',
+      organizationPhoneNumber: '',
+      organizationEmail: '',
+      organizationWebsite: '',
+      eventDate: formatDate(new Date().toString()),
+      eventStartTime: formatDate(new Date().toISOString(), 'YYYY-mm-ddTHH:MM'),
+      eventEndTime: formatDate(new Date().toISOString(), 'YYYY-mm-ddTHH:MM'),
+    });
+    setImage(null);
+  }, [form]);
+
+  useEffect(() => {
+    initializeForm();
+  }, [initializeForm]);
 
   return (
     <PageContent
@@ -185,7 +256,7 @@ const CreateEvent = () => {
       <PageHeader>
         <div>
           <div className="flex items-center gap-2">
-            <PageTitle>Create Event</PageTitle>
+            <PageTitle>Update Event</PageTitle>
             {Object.keys(errors).length > 0 && (
               <MyTooltip
                 className="bg-destructive"
@@ -199,18 +270,37 @@ const CreateEvent = () => {
               </MyTooltip>
             )}
           </div>
-          <PageDescription>Add new event to your system</PageDescription>
+          <PageDescription>Update the event details below</PageDescription>
         </div>
-        <Button
-          className="mt-6"
-          onClick={(e) => {
-            e.preventDefault();
-            form.handleSubmit(onSubmit)();
-          }}
-          disabled={!isValid || isLoading}
-        >
-          {isLoading ? 'Creating...' : 'Create'}
-        </Button>
+        <div className="item flex flex-col gap-2 md:flex-row">
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              form.handleSubmit(onSubmit)();
+            }}
+            disabled={!isValid || isLoading}
+          >
+            {isLoading ? 'Updating...' : 'Update'}
+          </Button>
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              initializeForm();
+            }}
+            variant={'secondary'}
+          >
+            Discard
+          </Button>
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              resetForm();
+            }}
+            variant={'outline'}
+          >
+            Clear form
+          </Button>
+        </div>
       </PageHeader>
       <ScrollArea>
         <EventForm
@@ -224,4 +314,4 @@ const CreateEvent = () => {
   );
 };
 
-export default CreateEvent;
+export default UpdateEvent;

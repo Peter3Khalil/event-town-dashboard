@@ -155,7 +155,7 @@ export const COLUMNS: ColumnDef<Event>[] = [
       <CellAction
         deleteFunction={EventsApi.delete}
         invalidateKey="events"
-        updateHref={`/events/${row.original._id}`}
+        updateHref={`/events/update/${row.original._id}`}
         model={row.original}
       />
     ),

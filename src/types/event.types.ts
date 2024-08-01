@@ -3,26 +3,33 @@ import { GetAllQueryParams, GetAllResponse } from '@/types/global.types';
 export type GetAllEventsResponse = GetAllResponse<Event>;
 
 export type Event = {
-  _id: string;
-  organizer: Organizer;
-  organizationName: string;
-  organizationWebsite?: string;
   organizerPlan: 'free' | 'basic' | 'pro' | 'standard' | 'premium';
+  _id: string;
+  organizerName: string;
+  organizationName: string;
+  organizationPhoneNumber: string;
+  organizationEmail: string;
+  organizationWebsite: string;
   eventName: string;
-  eventAddress?: string;
-  eventCategory: EventCategory;
+  eventAddress: string;
+  eventCategory: EventCategory[];
   eventDate: string;
   eventStartTime: string;
   eventEndTime: string;
   eventLocation: string;
-  eventImages?: string[];
-  eventImage?: string;
+  eventPlace: string;
+  eventImage: string;
   ticketEventLink: string;
   eventPrice: number;
-  eventDescription?: string;
-  eventStatus: EventStatus;
+  eventDescription: string;
+  eventStatus: string;
+  numberOfGoingUsers: number;
   createdAt: string;
   updatedAt: string;
+  __v: number;
+  expirePlanDate: string;
+  comments: string[];
+  id: string;
 };
 
 export type Organizer = {

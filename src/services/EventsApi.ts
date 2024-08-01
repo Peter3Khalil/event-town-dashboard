@@ -36,7 +36,7 @@ class EventsApi {
   }
 
   public getOne(id: string, config?: AxiosRequestConfig) {
-    return client.get<Event>(`/events/${id}`, config);
+    return client.get<{ data: Event }>(`/events/${id}`, config);
   }
 
   public create(event: AddEventType, config?: AxiosRequestConfig) {
@@ -44,10 +44,10 @@ class EventsApi {
   }
 
   public update(
-    id: string,
-    event: Partial<Event>,
+    updatedEvent: { id: string; event: Partial<Event> },
     config?: AxiosRequestConfig,
   ) {
+    const { id, event } = updatedEvent;
     return client.put<Event>(`/events/${id}`, event, config);
   }
 
