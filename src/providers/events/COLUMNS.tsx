@@ -1,4 +1,3 @@
-import { EVENT_STATUSES_COMPONENTS } from '@/app/(dashboard)/events/constants/EVENT_STATUSES_COMPONENTS';
 import AcceptButton from '@/components/events/AcceptButton';
 import EventComponent from '@/components/events/EventComponent';
 import PriceSorting from '@/components/events/PriceSorting';
@@ -7,10 +6,40 @@ import StatusFiltration from '@/components/events/StatusFiltration';
 import CellAction from '@/components/shared/CellAction';
 import SelectAllCheckbox from '@/components/shared/SelectAllCheckbox';
 import SelectRowCheckbox from '@/components/shared/SelectRowCheckbox';
+import { Badge } from '@/components/ui/badge';
 import { formatDateTime } from '@/lib/utils';
 import EventsApi from '@/services/EventsApi';
 import type { EventStatusWithOutAll, Event } from '@/types/event.types';
 import { ColumnDef } from '@tanstack/react-table';
+
+type EventStatusesComponentType = Record<
+  EventStatusWithOutAll,
+  { component: JSX.Element }
+>;
+
+export const EVENT_STATUSES_COMPONENTS: EventStatusesComponentType = {
+  rejected: {
+    component: (
+      <Badge className="capitalize" variant={'destructive'}>
+        <p className="text-[12px] font-normal">rejected</p>
+      </Badge>
+    ),
+  },
+  pending: {
+    component: (
+      <Badge className="capitalize" variant={'outline'}>
+        <p className="text-[12px] font-normal">Pending</p>
+      </Badge>
+    ),
+  },
+  accepted: {
+    component: (
+      <Badge className="text-xs capitalize opacity-40" variant={'secondary'}>
+        <p className="text-[12px] font-normal">accepted</p>
+      </Badge>
+    ),
+  },
+};
 
 export const COLUMNS: ColumnDef<Event>[] = [
   {

@@ -1,12 +1,12 @@
-import { Rubik } from 'next/font/google';
 import {
   CategoryIcon,
   EventIcon,
   HomeIcon,
   UsersIcon,
 } from '@/components/shared/Icons';
-import { LucideIcon } from 'lucide-react';
 import { GetAllQueryParams } from '@/types/global.types';
+import { LucideIcon } from 'lucide-react';
+import { Rubik } from 'next/font/google';
 
 export const BRAND_COLOR = '#f97316';
 

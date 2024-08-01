@@ -1,9 +1,7 @@
 'use client';
 
 import { CheckIcon, ChevronsUpDownIcon } from '@/components/shared/Icons';
-import { useCallback, useEffect, useState } from 'react';
-
-import { EVENT_STATUSES } from '@/app/(dashboard)/events/constants/EVENT_STATUSES';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -22,6 +20,11 @@ import { cn } from '@/lib/utils';
 import { useEvents } from '@/providers/events/events-provider';
 import { EventStatus } from '@/types/event.types';
 
+type EventStatusesType = {
+  value: EventStatus;
+  label: EventStatus;
+};
+
 const StatusFiltration = () => {
   const { setParams } = useEvents();
   const [open, setOpen] = useState(false);
@@ -33,6 +36,28 @@ const StatusFiltration = () => {
       setOpen(false);
     },
     [value],
+  );
+
+  const EVENT_STATUSES: EventStatusesType[] = useMemo(
+    () => [
+      {
+        value: 'all',
+        label: 'all',
+      },
+      {
+        value: 'pending',
+        label: 'pending',
+      },
+      {
+        value: 'rejected',
+        label: 'rejected',
+      },
+      {
+        value: 'accepted',
+        label: 'accepted',
+      },
+    ],
+    [],
   );
 
   useEffect(() => {
