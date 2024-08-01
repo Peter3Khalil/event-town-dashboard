@@ -62,11 +62,6 @@ const PLAN_BADGES: Record<Event['organizerPlan'], JSX.Element> = {
       <p className="text-[12px] font-normal">Standard</p>
     </Badge>
   ),
-  pro: (
-    <Badge className="bg-primary capitalize">
-      <p className="text-[12px] font-normal">Pro</p>
-    </Badge>
-  ),
 };
 
 export const COLUMNS: ColumnDef<Event>[] = [

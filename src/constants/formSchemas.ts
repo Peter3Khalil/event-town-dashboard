@@ -14,7 +14,7 @@ export const EVENT_SCHEMA = z.object({
   organizationEmail: z.string().email().optional(),
   organizationWebsite: z.string().url().optional(),
   organizerPlan: z
-    .enum(['free', 'basic', 'standard', 'pro', 'premium'])
+    .enum(['free', 'basic', 'standard', 'premium'])
     .default('free'),
   eventName: z
     .string()

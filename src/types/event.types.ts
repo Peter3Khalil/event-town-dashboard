@@ -3,7 +3,7 @@ import { GetAllQueryParams, GetAllResponse } from '@/types/global.types';
 export type GetAllEventsResponse = GetAllResponse<Event>;
 
 export type Event = {
-  organizerPlan: 'free' | 'basic' | 'pro' | 'standard' | 'premium';
+  organizerPlan: 'free' | 'basic' | 'standard' | 'premium';
   _id: string;
   organizerName: string;
   organizationName: string;

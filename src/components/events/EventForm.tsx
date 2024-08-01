@@ -163,7 +163,6 @@ const EventForm = <T extends FieldValues>({
                           'free',
                           'basic',
                           'standard',
-                          'pro',
                           'premium',
                         ] as Event['organizerPlan'][]
                       ).map((plan, index) => (
