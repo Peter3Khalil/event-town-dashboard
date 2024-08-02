@@ -9,6 +9,7 @@ import {
 import { AlertIcon } from '@/components/shared/Icons';
 import MyTooltip from '@/components/shared/MyTooltip';
 import { Button } from '@/components/ui/button';
+import ImageUploaderSkeleton from '@/components/ui/ImageUploaderSkeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import UserForm from '@/components/users/UserForm';
 import { USER_SCHEMA } from '@/constants/formSchemas';
@@ -186,7 +187,9 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
           className={cn({
             hidden: !isLoadingUser,
           })}
-        />
+        >
+          <ImageUploaderSkeleton />
+        </FormSkeleton>
         <UserForm
           form={form}
           profileImg={profileImg}

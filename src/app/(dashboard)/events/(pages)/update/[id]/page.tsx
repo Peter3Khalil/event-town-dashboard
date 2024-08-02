@@ -10,6 +10,7 @@ import {
 import { AlertIcon } from '@/components/shared/Icons';
 import MyTooltip from '@/components/shared/MyTooltip';
 import { Button } from '@/components/ui/button';
+import ImageUploaderSkeleton from '@/components/ui/ImageUploaderSkeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { EVENT_SCHEMA } from '@/constants/formSchemas';
 import useCustomQuery from '@/hooks/useCustomQuery';
@@ -310,7 +311,9 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
             hidden: !isLoadingEvent,
           })}
           count={12}
-        />
+        >
+          <ImageUploaderSkeleton />
+        </FormSkeleton>
         <EventForm
           form={form}
           formInputs={formInputs}
