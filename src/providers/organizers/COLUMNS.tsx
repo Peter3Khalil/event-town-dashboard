@@ -19,26 +19,31 @@ export const COLUMNS: ColumnDef<Organizer>[] = [
     enableHiding: false,
   },
   {
+    id: 'organizer',
     accessorKey: 'organizerName',
     header: 'Organizer Name',
     cell: ({ row }) => row.original.organizerName,
   },
   {
+    id: 'organization',
     accessorKey: 'organizationName',
     header: 'Organization',
     cell: ({ row }) => row.original.organizationName,
   },
   {
-    accessorKey: 'email',
+    id: 'Email',
+    accessorKey: 'organizationEmail',
     header: 'Email',
     cell: ({ row }) => row.original.organizationEmail,
   },
   {
-    accessorKey: 'phone',
+    id: 'phone',
+    accessorKey: 'organizationPhoneNumber',
     header: 'Phone',
     cell: ({ row }) => row.original.organizationPhoneNumber,
   },
   {
+    id: 'Field',
     accessorKey: 'organizationField',
     header: 'Field',
     cell: ({ row }) => row.original.organizationField,

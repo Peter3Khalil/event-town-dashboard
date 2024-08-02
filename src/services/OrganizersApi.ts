@@ -1,5 +1,4 @@
 import client from '@/lib/client';
-import { convertObjToFormData } from '@/lib/utils';
 import { GetAllQueryParams } from '@/types/global.types';
 import { GetAllOrganizersResponse, Organizer } from '@/types/organizer.types';
 import { AxiosRequestConfig } from 'axios';
@@ -31,10 +30,11 @@ class OrganizersApi {
     return client.get<{ data: Organizer }>(`/organizers/${id}`, config);
   }
 
-  public create(organizer: Organizer, config?: AxiosRequestConfig) {
-    const formData = convertObjToFormData(organizer);
-
-    return client.post<Organizer>('/organizers', formData, config);
+  public create(
+    organizer: Omit<Organizer, '_id' | 'createdAt' | 'updatedAt'>,
+    config?: AxiosRequestConfig,
+  ) {
+    return client.post<{ data: Organizer }>('/organizers', organizer, config);
   }
 
   public update(
@@ -42,9 +42,8 @@ class OrganizersApi {
     config?: AxiosRequestConfig,
   ) {
     const { id, organizer } = updatedOrganizer;
-    const formData = convertObjToFormData(organizer);
 
-    return client.put<Organizer>(`/organizers/${id}`, formData, config);
+    return client.put<Organizer>(`/organizers/${id}`, organizer, config);
   }
 
   public delete(id: string, config?: AxiosRequestConfig) {

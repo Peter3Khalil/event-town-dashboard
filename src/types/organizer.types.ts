@@ -8,7 +8,7 @@ export type Organizer = {
   organizationWebsite: string;
   organizationPhoneNumber: string;
   organizationEmail: string;
-  advice: string;
+  advice?: string;
   createdAt: string;
   updatedAt: string;
 };

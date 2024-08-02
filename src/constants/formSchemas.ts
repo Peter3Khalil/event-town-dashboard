@@ -86,3 +86,13 @@ export const LOGIN_SCHEMA = z.object({
   email: z.string().email(),
   password: z.string().min(8),
 });
+
+export const ORGANIZER_SCHEMA = z.object({
+  organizerName: z.string().min(3).max(30),
+  organizationName: z.string().min(3).max(30),
+  organizationField: z.string().min(3).max(30),
+  organizationPhoneNumber: z.string().min(11),
+  organizationEmail: z.string().email(),
+  organizationWebsite: z.string().url(),
+  advice: z.string().optional(),
+});
