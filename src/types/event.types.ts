@@ -32,13 +32,6 @@ export type Event = {
   id: string;
 };
 
-export type Organizer = {
-  _id: string;
-  name: string;
-  email: string;
-  phone: string;
-};
-
 export type EventCategory = {
   _id: string;
   title: string;

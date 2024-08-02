@@ -2,6 +2,7 @@ import {
   CategoryIcon,
   EventIcon,
   HomeIcon,
+  OrganizerIcon,
   UsersIcon,
 } from '@/components/shared/Icons';
 import { GetAllQueryParams } from '@/types/global.types';
@@ -22,7 +23,12 @@ type NavigationItem = {
   readonly icon: LucideIcon;
   readonly name: string;
 };
-type NavigationsKeys = 'dashboard' | 'events' | 'users' | 'categories';
+type NavigationsKeys =
+  | 'dashboard'
+  | 'events'
+  | 'users'
+  | 'categories'
+  | 'organizers';
 
 export const NAVIGATION_ITEMS: Readonly<
   Record<NavigationsKeys, NavigationItem>
@@ -31,6 +37,7 @@ export const NAVIGATION_ITEMS: Readonly<
   events: { href: '/events', icon: EventIcon, name: 'Events' },
   users: { href: '/users', icon: UsersIcon, name: 'Users' },
   categories: { href: '/categories', icon: CategoryIcon, name: 'Categories' },
+  organizers: { href: '/organizers', icon: OrganizerIcon, name: 'Organizers' },
 };
 
 export const DEFAULT_QUERY_PARAMS: GetAllQueryParams = {

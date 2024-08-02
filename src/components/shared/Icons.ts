@@ -28,4 +28,5 @@ export {
   Phone as PhoneIcon,
   Mail as MailIcon,
   MapPin as LocationIcon,
+  Boxes as OrganizerIcon,
 } from 'lucide-react';
