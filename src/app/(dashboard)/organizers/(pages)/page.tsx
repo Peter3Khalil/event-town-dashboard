@@ -22,7 +22,7 @@ import React from 'react';
 
 const Organizers = () => {
   useSetBreadcrumb({
-    breadcrumbPath: '/dashboard/organizers/All Users',
+    breadcrumbPath: '/dashboard/organizers/All Organizers',
   });
 
   const { table } = useOrganizersTable();
