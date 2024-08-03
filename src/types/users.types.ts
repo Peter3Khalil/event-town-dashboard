@@ -14,7 +14,7 @@ export type User = {
   password: string;
   location: string;
   gender: 'male' | 'female';
-  phone?: string;
+  phone: string;
   interests?: Interest[];
   slug?: string;
   isOAuthUser: boolean;
