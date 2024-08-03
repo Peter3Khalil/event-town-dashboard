@@ -1,5 +1,8 @@
 import { useEvents } from '@/providers/events/events-provider';
-import { EventsTableProvider } from '@/providers/events/events-table-provider';
+import {
+  EventsTableProvider,
+  COLUMNS,
+} from '@/providers/events/events-table-provider';
 
 const withEventsTableProvider = <P extends object>(
   Component: React.ComponentType<P>,
@@ -12,7 +15,8 @@ const withEventsTableProvider = <P extends object>(
 
     return (
       <EventsTableProvider
-        events={data?.data.data || []}
+        data={data?.data.data || []}
+        columns={COLUMNS}
         totalRowCount={data?.data.totlaCount}
         pagination={{
           pageIndex: params.page - 1,

@@ -1,72 +1,72 @@
 'use client';
-import { COLUMNS } from '@/providers/organizers/COLUMNS';
-import { useOrganizers } from '@/providers/organizers/organizers-provider';
+import CellAction from '@/components/shared/CellAction';
+import SelectAllCheckbox from '@/components/shared/SelectAllCheckbox';
+import SelectRowCheckbox from '@/components/shared/SelectRowCheckbox';
+import createTableContext from '@/providers/table-provider';
+import OrganizersApi from '@/services/OrganizersApi';
 import { Organizer } from '@/types/organizer.types';
-import {
-  getCoreRowModel,
-  Table,
-  useReactTable,
-  VisibilityState,
-} from '@tanstack/react-table';
-import { createContext, useContext, useState } from 'react';
+import { ColumnDef } from '@tanstack/react-table';
 
-type ContextType<TData> = {
-  table: Table<TData>;
-};
-const OrganizersTableContext = createContext<ContextType<Organizer>>({
-  table: {} as Table<Organizer>,
-});
+const {
+  TableProvider: OrganizersTableProvider,
+  useTableContext: useOrganizersTable,
+} = createTableContext<Organizer>();
 
-const OrganizersTableProvider = ({
-  children,
-  organizers = [],
-}: {
-  children: React.ReactNode;
-  organizers: Organizer[];
-}) => {
-  const {
-    params,
-    queryResult: { data },
-  } = useOrganizers();
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+const COLUMNS: ColumnDef<Organizer>[] = [
+  {
+    id: 'select',
+    header: ({ table }) => <SelectAllCheckbox table={table} />,
+    cell: ({ row }) => <SelectRowCheckbox row={row} />,
+    enableHiding: false,
+  },
+  {
+    accessorKey: '_id',
+    header: 'Id',
+    cell: ({ row }) => row.index + 1,
+    enableHiding: false,
+  },
+  {
+    id: 'organizer',
+    accessorKey: 'organizerName',
+    header: 'Organizer Name',
+    cell: ({ row }) => row.original.organizerName,
+  },
+  {
+    id: 'organization',
+    accessorKey: 'organizationName',
+    header: 'Organization',
+    cell: ({ row }) => row.original.organizationName,
+  },
+  {
+    id: 'Email',
+    accessorKey: 'organizationEmail',
+    header: 'Email',
+    cell: ({ row }) => row.original.organizationEmail,
+  },
+  {
+    id: 'phone',
+    accessorKey: 'organizationPhoneNumber',
+    header: 'Phone',
+    cell: ({ row }) => row.original.organizationPhoneNumber,
+  },
+  {
+    id: 'Field',
+    accessorKey: 'organizationField',
+    header: 'Field',
+    cell: ({ row }) => row.original.organizationField,
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) => (
+      <CellAction
+        deleteFunction={OrganizersApi.delete}
+        invalidateKey="organizers"
+        updateHref={`/organizers/update/${row.original._id}`}
+        model={row.original}
+      />
+    ),
+    enableHiding: false,
+  },
+];
 
-  const table = useReactTable({
-    data: organizers,
-    columns: COLUMNS,
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    onColumnVisibilityChange: setColumnVisibility,
-    state: {
-      pagination: {
-        pageIndex: params.page - 1 || 0,
-        pageSize: params.limit || 10,
-      },
-      columnVisibility,
-    },
-    rowCount: data?.data.totlaCount || 0,
-  });
-
-  return (
-    <OrganizersTableContext.Provider
-      value={{
-        table,
-      }}
-    >
-      {children}
-    </OrganizersTableContext.Provider>
-  );
-};
-
-const useOrganizersTable = () => {
-  const context = useContext(OrganizersTableContext);
-
-  if (context === undefined) {
-    throw new Error(
-      'useOrganizersTable must be used within a OrganizersTableProvider',
-    );
-  }
-
-  return context;
-};
-
-export { OrganizersTableProvider, useOrganizersTable };
+export { COLUMNS, OrganizersTableProvider, useOrganizersTable };

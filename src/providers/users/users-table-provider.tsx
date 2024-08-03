@@ -1,70 +1,57 @@
 'use client';
-import { COLUMNS } from '@/providers/users/COLUMNS';
+import createTableContext from '@/providers/table-provider';
 import { User } from '@/types/users.types';
-import {
-  getCoreRowModel,
-  PaginationState,
-  Table,
-  useReactTable,
-  VisibilityState,
-} from '@tanstack/react-table';
-import { createContext, useContext, useState } from 'react';
+import CellAction from '@/components/shared/CellAction';
+import SelectAllCheckbox from '@/components/shared/SelectAllCheckbox';
+import SelectRowCheckbox from '@/components/shared/SelectRowCheckbox';
+import UserComponent from '@/components/users/UserComponent';
+import { Capitalize } from '@/lib/utils';
+import UsersApi from '@/services/UsersApi';
+import { ColumnDef } from '@tanstack/react-table';
 
-type ContextType<TData> = {
-  table: Table<TData>;
-};
-const UsersTableContext = createContext<ContextType<User>>({
-  table: {} as Table<User>,
-});
+const { TableProvider: UsersTableProvider, useTableContext: useUsersTable } =
+  createTableContext<User>();
 
-const UsersTableProvider = ({
-  children,
-  users = [],
-  totalRowCount = 0,
-  pagination = {
-    pageIndex: 0,
-    pageSize: 10,
+const COLUMNS: ColumnDef<User>[] = [
+  {
+    id: 'select',
+    header: ({ table }) => <SelectAllCheckbox table={table} />,
+    cell: ({ row }) => <SelectRowCheckbox row={row} />,
+    enableHiding: false,
   },
-}: {
-  children: React.ReactNode;
-  users: User[];
-  totalRowCount?: number;
-  pagination?: PaginationState;
-}) => {
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  {
+    accessorKey: '_id',
+    header: 'Id',
+    cell: ({ row }) => row.index + 1,
+    enableHiding: false,
+  },
+  {
+    accessorKey: 'name',
+    header: 'Name',
+    cell: ({ row }) => <UserComponent user={row.original} />,
+  },
+  {
+    accessorKey: 'role',
+    header: 'Role',
+    cell: ({ row }) => Capitalize(row.original.role),
+  },
+  {
+    accessorKey: 'gender',
+    header: 'Gender',
+    cell: ({ row }) => Capitalize(row.original.gender),
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) => (
+      <CellAction
+        deleteFunction={UsersApi.delete}
+        invalidateKey="users"
+        updateHref={`/users/update/${row.original._id}`}
+        model={row.original}
+      />
+    ),
+    enableHiding: false,
+  },
+];
 
-  const table = useReactTable({
-    data: users,
-    columns: COLUMNS,
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    onColumnVisibilityChange: setColumnVisibility,
-    state: {
-      pagination,
-      columnVisibility,
-    },
-    rowCount: totalRowCount,
-  });
-
-  return (
-    <UsersTableContext.Provider
-      value={{
-        table,
-      }}
-    >
-      {children}
-    </UsersTableContext.Provider>
-  );
-};
-
-const useUsersTable = () => {
-  const context = useContext(UsersTableContext);
-
-  if (context === undefined) {
-    throw new Error('useUsersTable must be used within a UsersTableProvider');
-  }
-
-  return context;
-};
-
-export { UsersTableProvider, useUsersTable };
+export { UsersTableProvider, useUsersTable, COLUMNS };

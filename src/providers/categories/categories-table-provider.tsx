@@ -1,72 +1,52 @@
 'use client';
-import { COLUMNS } from '@/providers/categories/COLUMNS';
+import createTableContext from '@/providers/table-provider';
 import { Category } from '@/types/categories.types';
-import {
-  getCoreRowModel,
-  PaginationState,
-  Table,
-  useReactTable,
-  VisibilityState,
-} from '@tanstack/react-table';
-import { createContext, useContext, useState } from 'react';
+import DeleteCategoryAlert from '@/components/category/DeleteCategoryAlert';
+import EditCategoryDialog from '@/components/category/EditCategoryDialog';
+import { Capitalize, formatDateTime } from '@/lib/utils';
+import { ColumnDef } from '@tanstack/react-table';
 
-type ContextType<TData> = {
-  table: Table<TData>;
-};
-const CategoriesTableContext = createContext<ContextType<Category>>({
-  table: {} as Table<Category>,
-});
+const {
+  TableProvider: CategoriesTableProvider,
+  useTableContext: useCategoriesTable,
+} = createTableContext<Category>();
 
-const CategoriesTableProvider = ({
-  children,
-  categories = [],
-  totalRowCount = 0,
-  pagination = {
-    pageIndex: 0,
-    pageSize: 10,
+const COLUMNS: ColumnDef<Category>[] = [
+  {
+    id: 'ID',
+    accessorKey: '_id',
+    header: 'Id',
+    cell: ({ row }) => row.index + 1,
+    enableHiding: false,
   },
-}: {
-  children: React.ReactNode;
-  categories: Category[];
-  totalRowCount?: number;
-  pagination?: PaginationState;
-}) => {
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  {
+    accessorKey: 'title',
+    header: 'Title',
+    cell: ({ row }) => Capitalize(row.original.title),
+  },
+  {
+    id: 'Created At',
+    accessorKey: 'createdAt',
+    header: 'Created At',
+    cell: ({ row }) => formatDateTime(row.original.createdAt),
+  },
+  {
+    id: 'Updated At',
+    accessorKey: 'updatedAt',
+    header: 'Updated At',
+    cell: ({ row }) => formatDateTime(row.original.updatedAt),
+  },
+  {
+    id: 'Actions',
+    accessorKey: 'actions',
+    header: 'Actions',
+    cell: ({ row }) => (
+      <div className="flex items-center">
+        <EditCategoryDialog category={row.original} />
+        <DeleteCategoryAlert category={row.original} />
+      </div>
+    ),
+  },
+];
 
-  const table = useReactTable({
-    data: categories,
-    columns: COLUMNS,
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    onColumnVisibilityChange: setColumnVisibility,
-    state: {
-      pagination,
-      columnVisibility,
-    },
-    rowCount: totalRowCount,
-  });
-
-  return (
-    <CategoriesTableContext.Provider
-      value={{
-        table,
-      }}
-    >
-      {children}
-    </CategoriesTableContext.Provider>
-  );
-};
-
-const useCategoriesTable = () => {
-  const context = useContext(CategoriesTableContext);
-
-  if (context === undefined) {
-    throw new Error(
-      'useCategoriesTable must be used within a CategoriesTableProvider',
-    );
-  }
-
-  return context;
-};
-
-export { CategoriesTableProvider, useCategoriesTable };
+export { CategoriesTableProvider, useCategoriesTable, COLUMNS };

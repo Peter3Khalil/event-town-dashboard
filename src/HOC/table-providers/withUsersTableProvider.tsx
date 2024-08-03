@@ -1,5 +1,8 @@
 import { useUsers } from '@/providers/users/users-provider';
-import { UsersTableProvider } from '@/providers/users/users-table-provider';
+import {
+  COLUMNS,
+  UsersTableProvider,
+} from '@/providers/users/users-table-provider';
 
 const withUsersTableProvider = <P extends object>(
   Component: React.ComponentType<P>,
@@ -12,7 +15,8 @@ const withUsersTableProvider = <P extends object>(
 
     return (
       <UsersTableProvider
-        users={data?.data.data || []}
+        data={data?.data.data || []}
+        columns={COLUMNS}
         totalRowCount={data?.data.totlaCount}
         pagination={{
           pageIndex: params.page - 1,

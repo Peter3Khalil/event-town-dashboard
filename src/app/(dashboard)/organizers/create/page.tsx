@@ -1,5 +1,4 @@
 'use client';
-import FormSkeleton from '@/components/FormSkeleton';
 import {
   PageContent,
   PageDescription,
@@ -12,7 +11,7 @@ import MyTooltip from '@/components/shared/MyTooltip';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ORGANIZER_SCHEMA } from '@/constants/formSchemas';
-import useCustomQuery from '@/hooks/useCustomQuery';
+import usePageTitle from '@/hooks/usePageTitle';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { cn } from '@/lib/utils';
 import OrganizersApi from '@/services/OrganizersApi';
@@ -20,49 +19,33 @@ import { FormInput, ValidationError } from '@/types/global.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import { FC, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import { z } from 'zod';
+
 type MyFormInput = FormInput & {
   name: keyof z.infer<typeof ORGANIZER_SCHEMA>;
 };
-const UPDATE_ORGANIZER_SCHEMA = ORGANIZER_SCHEMA.partial();
 
-type UpdateOrganizerProps = {
-  params: {
-    id: string;
-  };
-};
-
-const UpdateOrganizer: FC<UpdateOrganizerProps> = ({ params: { id } }) => {
+const CreateOrganizer = () => {
   useSetBreadcrumb({
-    breadcrumbPath: '/dashboard/organizers/update organizer',
+    breadcrumbPath: '/dashboard/organizers/Create',
   });
   const queryClient = useQueryClient();
   const router = useRouter();
-  const form = useForm<z.infer<typeof UPDATE_ORGANIZER_SCHEMA>>({
-    resolver: zodResolver(UPDATE_ORGANIZER_SCHEMA),
+  const form = useForm<z.infer<typeof ORGANIZER_SCHEMA>>({
+    resolver: zodResolver(ORGANIZER_SCHEMA),
     mode: 'onChange',
   });
   const {
-    formState: { isValid, errors },
+    formState: { isValid },
   } = form;
 
-  const { data, isLoading: isLoadingOrganizer } = useCustomQuery(
-    ['organizerDetails', [id]],
-    () => OrganizersApi.getOne(id),
-    {
-      cacheTime: 0,
-    },
-  );
-
-  const organizerDetails = useMemo(() => data?.data.data, [data?.data.data]);
-
-  const { mutate, isLoading } = useMutation(OrganizersApi.update, {
-    onSuccess() {
+  const { mutate, isLoading } = useMutation(OrganizersApi.create, {
+    onSuccess(data) {
       queryClient.invalidateQueries('organizers');
-      router.push(`/organizers/${id}`);
+      router.push(`/organizers/${data.data.data._id}`);
     },
     onError(err) {
       const error = err as AxiosError<ValidationError>;
@@ -71,7 +54,7 @@ const UpdateOrganizer: FC<UpdateOrganizerProps> = ({ params: { id } }) => {
         const errors = error.response.data.errors;
         errors.map((e) => {
           form.setError(
-            e.path as unknown as keyof z.infer<typeof UPDATE_ORGANIZER_SCHEMA>,
+            e.path as unknown as keyof z.infer<typeof ORGANIZER_SCHEMA>,
             {
               message: e.msg,
             },
@@ -81,8 +64,8 @@ const UpdateOrganizer: FC<UpdateOrganizerProps> = ({ params: { id } }) => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof UPDATE_ORGANIZER_SCHEMA>) {
-    mutate({ id, organizer: values });
+  function onSubmit(values: z.infer<typeof ORGANIZER_SCHEMA>) {
+    mutate(values);
   }
 
   const formInputs: MyFormInput[] = useMemo(
@@ -127,13 +110,7 @@ const UpdateOrganizer: FC<UpdateOrganizerProps> = ({ params: { id } }) => {
     [],
   );
 
-  // fill the form with the user details
-  useEffect(() => {
-    if (organizerDetails) {
-      form.reset(organizerDetails);
-    }
-  }, [form, organizerDetails]);
-
+  usePageTitle('Create Organizer');
   return (
     <PageContent
       className={cn({
@@ -143,8 +120,8 @@ const UpdateOrganizer: FC<UpdateOrganizerProps> = ({ params: { id } }) => {
       <PageHeader>
         <div>
           <div className="flex items-center gap-2">
-            <PageTitle>Update Organizer</PageTitle>
-            {Object.keys(errors).length > 0 && (
+            <PageTitle>Create Organizer</PageTitle>
+            {!isValid && (
               <MyTooltip
                 className="bg-destructive"
                 content={
@@ -157,7 +134,7 @@ const UpdateOrganizer: FC<UpdateOrganizerProps> = ({ params: { id } }) => {
               </MyTooltip>
             )}
           </div>
-          <PageDescription>Update Organizer data </PageDescription>
+          <PageDescription>Add new organizer to your system</PageDescription>
         </div>
         <Button
           type="button"
@@ -165,26 +142,14 @@ const UpdateOrganizer: FC<UpdateOrganizerProps> = ({ params: { id } }) => {
           onClick={form.handleSubmit(onSubmit)}
           disabled={!isValid || isLoading}
         >
-          {isLoading ? 'Updating...' : 'Update'}
+          {isLoading ? 'Creating...' : 'Create'}
         </Button>
       </PageHeader>
       <ScrollArea>
-        <FormSkeleton
-          className={cn({
-            hidden: !isLoadingOrganizer,
-          })}
-          count={7}
-        />
-        <OrganizerForm
-          form={form}
-          formInputs={formInputs}
-          className={cn({
-            hidden: isLoadingOrganizer,
-          })}
-        />
+        <OrganizerForm form={form} formInputs={formInputs} />
       </ScrollArea>
     </PageContent>
   );
 };
 
-export default UpdateOrganizer;
+export default CreateOrganizer;

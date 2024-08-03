@@ -11,13 +11,13 @@ import { CalendarPlusIcon } from '@/components/shared/Icons';
 import PaginationControl from '@/components/shared/PaginationControl';
 import Search from '@/components/shared/Search';
 import TableViewer from '@/components/shared/TableViewer';
+import { withEventsProvider } from '@/HOC/data-providers';
+import { withEventsTableProvider } from '@/HOC/table-providers';
+import usePageTitle from '@/hooks/usePageTitle';
 import useRefetch from '@/hooks/useRefetch';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { useEvents } from '@/providers/events/events-provider';
-import {
-  EventsTableProvider,
-  useEventsTable,
-} from '@/providers/events/events-table-provider';
+import { useEventsTable } from '@/providers/events/events-table-provider';
 
 const Events = () => {
   useSetBreadcrumb({ breadcrumbPath: '/dashboard/events/All Events' });
@@ -44,7 +44,7 @@ const Events = () => {
     refresh,
     cancelQuery,
   });
-
+  usePageTitle('Events');
   return (
     <PageContent>
       <PageHeader>
@@ -81,15 +81,4 @@ const Events = () => {
   );
 };
 
-const Wrapper = () => {
-  const {
-    queryResult: { data },
-  } = useEvents();
-  return (
-    <EventsTableProvider events={data?.data.data || []}>
-      <Events />
-    </EventsTableProvider>
-  );
-};
-
-export default Wrapper;
+export default withEventsProvider(withEventsTableProvider(Events));

@@ -120,6 +120,7 @@ const CreateUser = () => {
     ],
     [],
   );
+
   return (
     <PageContent
       className={cn({

@@ -11,14 +11,13 @@ import { OrganizerIcon } from '@/components/shared/Icons';
 import PaginationControl from '@/components/shared/PaginationControl';
 import Search from '@/components/shared/Search';
 import TableViewer from '@/components/shared/TableViewer';
+import withOrganizersProvider from '@/HOC/data-providers/withOrganizersProvider';
+import { withOrganizersTableProvider } from '@/HOC/table-providers';
+import usePageTitle from '@/hooks/usePageTitle';
 import useRefetch from '@/hooks/useRefetch';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { useOrganizers } from '@/providers/organizers/organizers-provider';
-import {
-  OrganizersTableProvider,
-  useOrganizersTable,
-} from '@/providers/organizers/organizers-table-provider';
-import React from 'react';
+import { useOrganizersTable } from '@/providers/organizers/organizers-table-provider';
 
 const Organizers = () => {
   useSetBreadcrumb({
@@ -48,6 +47,8 @@ const Organizers = () => {
     refresh,
     cancelQuery,
   });
+
+  usePageTitle('Organizers');
 
   return (
     <PageContent>
@@ -85,15 +86,4 @@ const Organizers = () => {
   );
 };
 
-const Wrapper = () => {
-  const {
-    queryResult: { data },
-  } = useOrganizers();
-  return (
-    <OrganizersTableProvider organizers={data?.data.data || []}>
-      <Organizers />
-    </OrganizersTableProvider>
-  );
-};
-
-export default Wrapper;
+export default withOrganizersProvider(withOrganizersTableProvider(Organizers));

@@ -58,10 +58,9 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
 
   const userDetails = useMemo(() => data?.data.data, [data?.data.data]);
 
-  const { mutate, isLoading } = useMutation(UsersApi.updateUser, {
+  const { mutate, isLoading } = useMutation(UsersApi.update, {
     onSuccess() {
       queryClient.invalidateQueries('users');
-      queryClient.invalidateQueries({ queryKey: ['userDetails', [id]] });
       router.push(`/users/${id}`);
     },
     onError(err) {
@@ -82,7 +81,7 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
   });
 
   function onSubmit(values: z.infer<typeof UPDATE_USER_SCHEMA>) {
-    mutate({ id, user: { ...values, profileImg } as Partial<User> });
+    mutate({ id, data: { ...values, profileImg } as Partial<User> });
   }
 
   const formInputs: FormInput[] = useMemo(
