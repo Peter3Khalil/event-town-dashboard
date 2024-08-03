@@ -1,4 +1,5 @@
 'use client';
+import FormSkeleton from '@/components/FormSkeleton';
 import {
   PageContent,
   PageDescription,
@@ -8,49 +9,60 @@ import {
 import { AlertIcon } from '@/components/shared/Icons';
 import MyTooltip from '@/components/shared/MyTooltip';
 import { Button } from '@/components/ui/button';
+import ImageUploaderSkeleton from '@/components/ui/ImageUploaderSkeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import UserForm from '@/components/users/UserForm';
 import { USER_SCHEMA } from '@/constants/formSchemas';
-import withCategoriesProvider from '@/HOC/withCategoriesProvider';
+import useCustomQuery from '@/hooks/useCustomQuery';
+import usePageTitle from '@/hooks/usePageTitle';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { cn } from '@/lib/utils';
 import UsersApi from '@/services/UsersApi';
 import { FormInput, ValidationError } from '@/types/global.types';
+import { User } from '@/types/users.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import { z } from 'zod';
 
-const CREATE_USER_SCHEMA = USER_SCHEMA.refine(
-  (data) => data.password === data.confirmPassword,
-  {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
-  },
-);
+const UPDATE_USER_SCHEMA = USER_SCHEMA.partial();
 
-const CreateUser = () => {
+type UpdateUserProps = {
+  params: {
+    id: string;
+  };
+};
+
+const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
   useSetBreadcrumb({
-    breadcrumbPath: '/dashboard/users/Create',
+    breadcrumbPath: '/dashboard/users/update user',
   });
   const queryClient = useQueryClient();
   const router = useRouter();
-  const [profileImg, setProfileImg] = useState<File | null>(null);
-  const form = useForm<z.infer<typeof CREATE_USER_SCHEMA>>({
-    resolver: zodResolver(CREATE_USER_SCHEMA),
+  const [profileImg, setProfileImg] = useState<File | null | string>(null);
+  const form = useForm<z.infer<typeof UPDATE_USER_SCHEMA>>({
+    resolver: zodResolver(UPDATE_USER_SCHEMA),
     mode: 'onChange',
   });
   const {
     formState: { isValid, errors },
   } = form;
 
-  const { mutate, isLoading } = useMutation(UsersApi.create, {
-    onSuccess(data) {
+  const { data, isLoading: isLoadingUser } = useCustomQuery(
+    ['userDetails', [id]],
+    () => UsersApi.getOne(id),
+  );
+
+  const userDetails = useMemo(() => data?.data.data, [data?.data.data]);
+
+  const { mutate, isLoading } = useMutation(UsersApi.updateUser, {
+    onSuccess() {
       queryClient.invalidateQueries('users');
-      router.push(`/users/${data.data.data._id}`);
+      queryClient.invalidateQueries({ queryKey: ['userDetails', [id]] });
+      router.push(`/users/${id}`);
     },
     onError(err) {
       const error = err as AxiosError<ValidationError>;
@@ -59,7 +71,7 @@ const CreateUser = () => {
         const errors = error.response.data.errors;
         errors.map((e) => {
           form.setError(
-            e.path as unknown as keyof z.infer<typeof CREATE_USER_SCHEMA>,
+            e.path as unknown as keyof z.infer<typeof UPDATE_USER_SCHEMA>,
             {
               message: e.msg,
             },
@@ -69,11 +81,8 @@ const CreateUser = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof CREATE_USER_SCHEMA>) {
-    mutate({
-      ...values,
-      profileImg,
-    });
+  function onSubmit(values: z.infer<typeof UPDATE_USER_SCHEMA>) {
+    mutate({ id, user: { ...values, profileImg } as Partial<User> });
   }
 
   const formInputs: FormInput[] = useMemo(
@@ -117,6 +126,28 @@ const CreateUser = () => {
     ],
     [],
   );
+
+  usePageTitle('Update User');
+
+  // fill the form with the user details
+  useEffect(() => {
+    if (userDetails) {
+      const { name, email, location, gender, phone, role } = userDetails;
+      form.reset({
+        name,
+        email,
+        location,
+        gender,
+        interests: userDetails?.interests
+          ? userDetails?.interests.map((i) => i._id)
+          : [],
+        phone,
+        role,
+      });
+      setProfileImg(userDetails?.profileImg ?? null);
+    }
+  }, [form, userDetails]);
+
   return (
     <PageContent
       className={cn({
@@ -126,7 +157,7 @@ const CreateUser = () => {
       <PageHeader>
         <div>
           <div className="flex items-center gap-2">
-            <PageTitle>Create User</PageTitle>
+            <PageTitle>Update User</PageTitle>
             {Object.keys(errors).length > 0 && (
               <MyTooltip
                 className="bg-destructive"
@@ -140,7 +171,7 @@ const CreateUser = () => {
               </MyTooltip>
             )}
           </div>
-          <PageDescription>Add new user to your system</PageDescription>
+          <PageDescription>Update user data </PageDescription>
         </div>
         <Button
           className="mt-6"
@@ -150,20 +181,29 @@ const CreateUser = () => {
           }}
           disabled={!isValid || isLoading}
         >
-          {isLoading ? 'Creating...' : 'Create'}
+          {isLoading ? 'Updating...' : 'Update'}
         </Button>
       </PageHeader>
       <ScrollArea>
+        <FormSkeleton
+          className={cn({
+            hidden: !isLoadingUser,
+          })}
+        >
+          <ImageUploaderSkeleton />
+        </FormSkeleton>
         <UserForm
           form={form}
           profileImg={profileImg}
           formInputs={formInputs}
-          // eslint-disable-next-line no-unused-vars
-          setProfileImg={setProfileImg as (file: File | null | string) => void}
+          setProfileImg={setProfileImg}
+          className={cn({
+            hidden: isLoadingUser,
+          })}
         />
       </ScrollArea>
     </PageContent>
   );
 };
 
-export default withCategoriesProvider(CreateUser);
+export default UpdateUser;

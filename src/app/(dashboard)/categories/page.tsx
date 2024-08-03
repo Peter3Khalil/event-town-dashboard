@@ -10,13 +10,12 @@ import ColumnsVisibilityDropMenu from '@/components/shared/ColumnsVisibilityDrop
 import PaginationControl from '@/components/shared/PaginationControl';
 import Search from '@/components/shared/Search';
 import TableViewer from '@/components/shared/TableViewer';
+import { withCategoriesProvider } from '@/HOC/data-providers';
+import { withCategoriesTableProvider } from '@/HOC/table-providers';
 import useRefetch from '@/hooks/useRefetch';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { useCategories } from '@/providers/categories/categories-provider';
-import {
-  CategoriesTableProvider,
-  useCategoriesTable,
-} from '@/providers/categories/categories-table-provider';
+import { useCategoriesTable } from '@/providers/categories/categories-table-provider';
 
 const Categories = () => {
   useSetBreadcrumb({ breadcrumbPath: '/dashboard/categories/All Categories' });
@@ -79,15 +78,4 @@ const Categories = () => {
   );
 };
 
-const Wrapper = () => {
-  const {
-    queryResult: { data },
-  } = useCategories();
-  return (
-    <CategoriesTableProvider categories={data?.data.data || []}>
-      <Categories />
-    </CategoriesTableProvider>
-  );
-};
-
-export default Wrapper;
+export default withCategoriesProvider(withCategoriesTableProvider(Categories));

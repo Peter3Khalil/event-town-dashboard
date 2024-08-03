@@ -15,12 +15,13 @@ import { Button } from '@/components/ui/button';
 import UserCard from '@/components/users/UserCard';
 import UserSkeletonCard from '@/components/users/UserSkeletonCard';
 import useCustomQuery from '@/hooks/useCustomQuery';
+import usePageTitle from '@/hooks/usePageTitle';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import UsersApi from '@/services/UsersApi';
 import { User } from '@/types/users.types';
 import Link from 'next/link';
 import { notFound, useRouter } from 'next/navigation';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 
 interface UserDetailsProps {
   params: {
@@ -39,11 +40,7 @@ const UserDetails: FC<UserDetailsProps> = ({ params: { id } }) => {
     breadcrumbPath: '/dashboard/users/user details',
   });
 
-  useEffect(() => {
-    if (user) {
-      document.title = user.name + ' | Admin Dashboard';
-    }
-  }, [user]);
+  usePageTitle(user?.name || 'User Details');
   if (isError) notFound();
   return (
     <PageContent className="items-center pb-4">

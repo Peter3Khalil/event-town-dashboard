@@ -11,8 +11,9 @@ import { UserIcon } from '@/components/shared/Icons';
 import PaginationControl from '@/components/shared/PaginationControl';
 import Search from '@/components/shared/Search';
 import TableViewer from '@/components/shared/TableViewer';
-import withUsersProvider from '@/HOC/withUsersProvider';
-import withUsersTableProvider from '@/HOC/withUsersTableProvider';
+import { withUsersProvider } from '@/HOC/data-providers';
+import { withUsersTableProvider } from '@/HOC/table-providers';
+import usePageTitle from '@/hooks/usePageTitle';
 import useRefetch from '@/hooks/useRefetch';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { useUsers } from '@/providers/users/users-provider';
@@ -43,6 +44,8 @@ const Users = () => {
     refresh,
     cancelQuery,
   });
+
+  usePageTitle('Users');
 
   return (
     <PageContent>
