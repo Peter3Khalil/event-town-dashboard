@@ -102,18 +102,28 @@ export const getNextDay = (date?: Date | string) => {
   return new Date(dateObj.setDate(dateObj.getDate() + 1));
 };
 
-export const convertObjToFormData = (obj: object) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const toFormData = (obj: Record<string, any>): FormData => {
   const formData = new FormData();
 
-  for (const [key, value] of Object.entries(obj)) {
-    if (Array.isArray(value)) {
-      for (const item of value) {
-        formData.append(key, item as unknown as string);
-      }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const appendFormData = (key: string, value: any): void => {
+    if (value instanceof File) {
+      formData.append(key, value);
+    } else if (Array.isArray(value)) {
+      value.forEach((item, index) => {
+        appendFormData(`${key}[${index}]`, item);
+      });
+    } else if (typeof value === 'object' && value !== null) {
+      Object.entries(value).forEach(([subKey, subValue]) => {
+        appendFormData(`${key}[${subKey}]`, subValue);
+      });
     } else if (value !== undefined && value !== null) {
-      formData.append(key, value as string | File);
+      formData.append(key, value);
     }
-  }
+  };
+
+  Object.entries(obj).forEach(([key, value]) => appendFormData(key, value));
 
   return formData;
 };

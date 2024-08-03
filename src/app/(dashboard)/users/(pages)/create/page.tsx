@@ -15,7 +15,6 @@ import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { cn } from '@/lib/utils';
 import UsersApi from '@/services/UsersApi';
 import { FormInput, ValidationError } from '@/types/global.types';
-import { MutateUser } from '@/types/users.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
@@ -38,7 +37,7 @@ const CreateUser = () => {
   });
   const queryClient = useQueryClient();
   const router = useRouter();
-  const [profileImg, setProfileImg] = useState<File | null | string>(null);
+  const [profileImg, setProfileImg] = useState<File | null>(null);
   const form = useForm<z.infer<typeof CREATE_USER_SCHEMA>>({
     resolver: zodResolver(CREATE_USER_SCHEMA),
     mode: 'onChange',
@@ -72,8 +71,8 @@ const CreateUser = () => {
   function onSubmit(values: z.infer<typeof CREATE_USER_SCHEMA>) {
     mutate({
       ...values,
-      profileImg: profileImg ?? '',
-    } as unknown as MutateUser);
+      profileImg,
+    });
   }
 
   const formInputs: FormInput[] = useMemo(
@@ -158,7 +157,8 @@ const CreateUser = () => {
           form={form}
           profileImg={profileImg}
           formInputs={formInputs}
-          setProfileImg={setProfileImg}
+          // eslint-disable-next-line no-unused-vars
+          setProfileImg={setProfileImg as (file: File | null | string) => void}
         />
       </ScrollArea>
     </PageContent>

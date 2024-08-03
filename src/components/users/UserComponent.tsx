@@ -32,7 +32,7 @@ const UserComponent: FC<UserComponentProps> = ({
         </Button>
         <RecordComponent label="Email" value={user.email} />
         <RecordComponent label="location" value={user.location.toUpperCase()} />
-        <RecordComponent label="phone" value={user.phone} />
+        {user?.phone && <RecordComponent label="phone" value={user.phone} />}
       </div>
     </div>
   );

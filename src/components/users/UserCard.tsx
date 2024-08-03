@@ -79,7 +79,7 @@ const UserCard: FC<UserCardProps> = ({ user }) => {
         </div>
       </CardHeader>
       <CardContent>
-        {user && user?.interests.length > 0 && (
+        {user && user?.interests && user?.interests.length > 0 && (
           <>
             <h3 className="text-lg font-medium">Interests</h3>
             <Separator className="mb-2" />

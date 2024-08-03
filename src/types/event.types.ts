@@ -79,7 +79,7 @@ export type EventsQueryParams = GetAllQueryParams & {
 
 export type EventStatusWithOutAll = Exclude<EventStatus, 'all'>;
 
-export type AddEventType = Omit<
+export type NewEventType = Omit<
   Event,
   | '_id'
   | 'createdAt'

@@ -9,7 +9,7 @@ const initialUser: User = {
   active: false,
   calendar: [],
   emailVerified: false,
-  gender: '',
+  gender: 'male',
   interests: [],
   isOAuthUser: false,
   location: '',

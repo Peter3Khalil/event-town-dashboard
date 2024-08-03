@@ -89,10 +89,10 @@ const UserForm = <T extends FieldValues>({
                 name={'role' as Path<T>}
                 control={form.control}
                 defaultValue={
-                  (form.getValues('role' as Path<T>) as PathValue<
+                  (form.formState.defaultValues?.role || 'user') as PathValue<
                     T,
                     Path<T>
-                  >) || ('user' as PathValue<T, Path<T>>)
+                  >
                 }
                 render={({ field }) => (
                   <Select
@@ -118,8 +118,15 @@ const UserForm = <T extends FieldValues>({
               <Controller
                 name={'gender' as Path<T>}
                 control={form.control}
+                defaultValue={
+                  (form.formState.defaultValues?.gender || 'male') as PathValue<
+                    T,
+                    Path<T>
+                  >
+                }
                 render={({ field }) => (
                   <RadioGroup
+                    defaultValue="male"
                     className="flex"
                     onValueChange={(value) => field.onChange(value)}
                   >

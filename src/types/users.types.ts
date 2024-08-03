@@ -13,9 +13,9 @@ export type User = {
   email: string;
   password: string;
   location: string;
-  gender: string;
-  phone: string;
-  interests: Interest[];
+  gender: 'male' | 'female';
+  phone?: string;
+  interests?: Interest[];
   slug?: string;
   isOAuthUser: boolean;
   emailVerifyCode?: string;
@@ -34,20 +34,11 @@ type Interest = {
   title: string;
 };
 
-export type MutateUser = Omit<
+export type NewUserType = Pick<
   User,
-  | 'profileImg'
-  | 'slug'
-  | 'emailVerifyCode'
-  | 'emailVerifyExpires'
-  | 'emailVerified'
-  | 'active'
-  | 'wishlist'
-  | 'calendar'
-  | 'token'
-  | '_id'
-  | 'isOAuthUser'
+  'name' | 'email' | 'password' | 'location' | 'gender' | 'role' | 'phone'
 > & {
-  profileImg?: File;
+  interests?: string[];
+  profileImg?: File | null;
   confirmPassword: string;
 };

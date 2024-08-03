@@ -1,10 +1,10 @@
 import client from '@/lib/client';
-import { convertObjToFormData } from '@/lib/utils';
+import { toFormData } from '@/lib/utils';
 import { GetAllQueryParams } from '@/types/global.types';
 import {
   GetAllUsersResponse,
   LoginResponse,
-  MutateUser,
+  NewUserType,
   User,
 } from '@/types/users.types';
 import { AxiosRequestConfig } from 'axios';
@@ -40,8 +40,8 @@ class UsersApi {
     return client.get<Omit<LoginResponse, 'token'>>('/users/getMe', config);
   }
 
-  public create(user: MutateUser, config?: AxiosRequestConfig) {
-    const formData = convertObjToFormData(user);
+  public create(user: NewUserType, config?: AxiosRequestConfig) {
+    const formData = toFormData(user);
     return client.post<{ data: User }>('/users', formData, config);
   }
 
@@ -53,11 +53,11 @@ class UsersApi {
     config?: AxiosRequestConfig,
   ) {
     const { user } = updatedUser;
-    const formData = convertObjToFormData(user);
+    const formData = toFormData(user);
     return client.put<User>(`/users/${updatedUser.id}`, formData, config);
   }
 
-  public updateMyData(user: Partial<MutateUser>, config?: AxiosRequestConfig) {
+  public updateMyData(user: Partial<NewUserType>, config?: AxiosRequestConfig) {
     return client.put<User>(`/users/changeMyData`, user, config);
   }
 

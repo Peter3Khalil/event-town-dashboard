@@ -76,8 +76,8 @@ export const USER_SCHEMA = z.object({
     .string()
     .min(3, 'Location must be at least 3 characters long')
     .max(50, 'Location must be at most 50 characters long'),
-  gender: z.string().default('male'),
-  role: z.string().optional().default('user'),
+  gender: z.enum(['male', 'female']).default('male'),
+  role: z.enum(['user', 'admin']).default('user'),
   phone: z.string().optional(),
   interests: z.array(z.string()).optional(),
 });
