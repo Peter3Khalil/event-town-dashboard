@@ -31,12 +31,8 @@ interface UserDetailsProps {
 const UserDetails: FC<UserDetailsProps> = ({ params: { id } }) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const { data, isError, isLoading } = useCustomQuery(
-    ['user', id],
-    () => UsersApi.getOne(id),
-    {
-      cacheTime: 0,
-    },
+  const { data, isError, isLoading } = useCustomQuery(['userDetails', id], () =>
+    UsersApi.getOne(id),
   );
   const user = data?.data.data;
   useSetBreadcrumb({

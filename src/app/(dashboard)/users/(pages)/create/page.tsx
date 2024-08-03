@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import UserForm from '@/components/users/UserForm';
 import { USER_SCHEMA } from '@/constants/formSchemas';
+import withCategoriesProvider from '@/HOC/withCategoriesProvider';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { cn } from '@/lib/utils';
 import UsersApi from '@/services/UsersApi';
@@ -165,4 +166,4 @@ const CreateUser = () => {
   );
 };
 
-export default CreateUser;
+export default withCategoriesProvider(CreateUser);

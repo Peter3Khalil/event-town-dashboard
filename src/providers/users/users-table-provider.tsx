@@ -1,9 +1,9 @@
 'use client';
 import { COLUMNS } from '@/providers/users/COLUMNS';
-import { useUsers } from '@/providers/users/users-provider';
 import { User } from '@/types/users.types';
 import {
   getCoreRowModel,
+  PaginationState,
   Table,
   useReactTable,
   VisibilityState,
@@ -20,14 +20,17 @@ const UsersTableContext = createContext<ContextType<User>>({
 const UsersTableProvider = ({
   children,
   users = [],
+  totalRowCount = 0,
+  pagination = {
+    pageIndex: 0,
+    pageSize: 10,
+  },
 }: {
   children: React.ReactNode;
   users: User[];
+  totalRowCount?: number;
+  pagination?: PaginationState;
 }) => {
-  const {
-    params,
-    queryResult: { data },
-  } = useUsers();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const table = useReactTable({
@@ -37,13 +40,10 @@ const UsersTableProvider = ({
     manualPagination: true,
     onColumnVisibilityChange: setColumnVisibility,
     state: {
-      pagination: {
-        pageIndex: params.page - 1 || 0,
-        pageSize: params.limit || 10,
-      },
+      pagination,
       columnVisibility,
     },
-    rowCount: data?.data.totlaCount || 0,
+    rowCount: totalRowCount,
   });
 
   return (

@@ -11,13 +11,12 @@ import { UserIcon } from '@/components/shared/Icons';
 import PaginationControl from '@/components/shared/PaginationControl';
 import Search from '@/components/shared/Search';
 import TableViewer from '@/components/shared/TableViewer';
+import withUsersProvider from '@/HOC/withUsersProvider';
+import withUsersTableProvider from '@/HOC/withUsersTableProvider';
 import useRefetch from '@/hooks/useRefetch';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { useUsers } from '@/providers/users/users-provider';
-import {
-  UsersTableProvider,
-  useUsersTable,
-} from '@/providers/users/users-table-provider';
+import { useUsersTable } from '@/providers/users/users-table-provider';
 
 const Users = () => {
   useSetBreadcrumb({ breadcrumbPath: '/dashboard/users/All Users' });
@@ -81,15 +80,4 @@ const Users = () => {
   );
 };
 
-const Wrapper = () => {
-  const {
-    queryResult: { data },
-  } = useUsers();
-  return (
-    <UsersTableProvider users={data?.data.data || []}>
-      <Users />
-    </UsersTableProvider>
-  );
-};
-
-export default Wrapper;
+export default withUsersProvider(withUsersTableProvider(Users));

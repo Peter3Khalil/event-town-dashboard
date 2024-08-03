@@ -1,9 +1,9 @@
 'use client';
-import { useCategories } from '@/providers/categories/categories-provider';
 import { COLUMNS } from '@/providers/categories/COLUMNS';
 import { Category } from '@/types/categories.types';
 import {
   getCoreRowModel,
+  PaginationState,
   Table,
   useReactTable,
   VisibilityState,
@@ -20,14 +20,17 @@ const CategoriesTableContext = createContext<ContextType<Category>>({
 const CategoriesTableProvider = ({
   children,
   categories = [],
+  totalRowCount = 0,
+  pagination = {
+    pageIndex: 0,
+    pageSize: 10,
+  },
 }: {
   children: React.ReactNode;
   categories: Category[];
+  totalRowCount?: number;
+  pagination?: PaginationState;
 }) => {
-  const {
-    params,
-    queryResult: { data },
-  } = useCategories();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const table = useReactTable({
@@ -37,13 +40,10 @@ const CategoriesTableProvider = ({
     manualPagination: true,
     onColumnVisibilityChange: setColumnVisibility,
     state: {
-      pagination: {
-        pageIndex: params.page - 1 || 0,
-        pageSize: params.limit || 10,
-      },
+      pagination,
       columnVisibility,
     },
-    rowCount: data?.data.totlaCount || 0,
+    rowCount: totalRowCount,
   });
 
   return (

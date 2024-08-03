@@ -53,9 +53,6 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
   const { data, isLoading: isLoadingUser } = useCustomQuery(
     ['userDetails', [id]],
     () => UsersApi.getOne(id),
-    {
-      cacheTime: 0,
-    },
   );
 
   const userDetails = useMemo(() => data?.data.data, [data?.data.data]);
@@ -63,6 +60,7 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
   const { mutate, isLoading } = useMutation(UsersApi.updateUser, {
     onSuccess() {
       queryClient.invalidateQueries('users');
+      queryClient.invalidateQueries({ queryKey: ['userDetails', [id]] });
       router.push(`/users/${id}`);
     },
     onError(err) {
@@ -131,14 +129,15 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
   // fill the form with the user details
   useEffect(() => {
     if (userDetails) {
-      const { name, email, location, gender, interests, phone, role } =
-        userDetails;
+      const { name, email, location, gender, phone, role } = userDetails;
       form.reset({
         name,
         email,
         location,
         gender,
-        interests: interests.map((i) => i._id),
+        interests: userDetails?.interests
+          ? userDetails?.interests.map((i) => i._id)
+          : [],
         phone,
         role,
       });
