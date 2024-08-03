@@ -17,6 +17,7 @@ import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { cn } from '@/lib/utils';
 import UsersApi from '@/services/UsersApi';
 import { FormInput, ValidationError } from '@/types/global.types';
+import { User } from '@/types/users.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
@@ -74,7 +75,7 @@ const CreateUser = () => {
     mutate({
       ...values,
       profileImg,
-    });
+    } as unknown as User);
   }
 
   usePageTitle('Create User');

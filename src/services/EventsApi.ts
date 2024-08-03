@@ -1,15 +1,15 @@
 import client from '@/lib/client';
 import { toFormData } from '@/lib/utils';
+import { APIInterface } from '@/services/APIInterface';
 import {
   Event,
   EventAction,
   EventsQueryParams,
   GetAllEventsResponse,
-  NewEventType,
 } from '@/types/event.types';
 import { AxiosRequestConfig } from 'axios';
 
-class EventsApi {
+class EventsApi implements APIInterface<Event, EventsQueryParams> {
   private static instance: EventsApi;
 
   private constructor() {}
@@ -40,17 +40,17 @@ class EventsApi {
     return client.get<{ data: Event }>(`/events/${id}`, config);
   }
 
-  public create(event: NewEventType, config?: AxiosRequestConfig) {
+  public create(event: Event, config?: AxiosRequestConfig) {
     const formData = toFormData(event);
 
     return client.post<{ data: Event }>('/events', formData, config);
   }
 
   public update(
-    updatedEvent: { id: string; event: Partial<Event> },
+    updatedEvent: { id: string; data: Partial<Event> },
     config?: AxiosRequestConfig,
   ) {
-    const { id, event } = updatedEvent;
+    const { id, data: event } = updatedEvent;
     const formData = toFormData(event);
 
     return client.put<Event>(`/events/${id}`, formData, config);

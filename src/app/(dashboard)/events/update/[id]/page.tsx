@@ -122,7 +122,7 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
     (values: z.infer<typeof UPDATE_EVENT_SCHEMA>) => {
       mutate({
         id,
-        event: { ...values, eventImage: image } as unknown as Partial<Event>,
+        data: { ...values, eventImage: image } as unknown as Partial<Event>,
       });
     },
     [id, image, mutate],

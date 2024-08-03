@@ -1,12 +1,17 @@
 import client from '@/lib/client';
+import { APIInterface } from '@/services/APIInterface';
 import { Category, GetAllCategoriesResponse } from '@/types/categories.types';
 import { GetAllQueryParams } from '@/types/global.types';
 import { AxiosRequestConfig } from 'axios';
 
-class CategoriesApi {
+class CategoriesApi implements APIInterface<Category> {
   private static instance: CategoriesApi;
 
   private constructor() {}
+
+  public getOne(id: string, config?: AxiosRequestConfig) {
+    return client.get<{ data: Category }>(`/categories/${id}`, config);
+  }
 
   public static getInstance(): CategoriesApi {
     if (!CategoriesApi.instance) {
@@ -31,14 +36,14 @@ class CategoriesApi {
   }
 
   public create(category: { title: string }, config?: AxiosRequestConfig) {
-    return client.post<Category>('/categories', category, config);
+    return client.post<{ data: Category }>('/categories', category, config);
   }
   public update(
-    category: { title: string; id: string },
+    category: { id: string; data: Partial<Category> },
     config?: AxiosRequestConfig,
   ) {
     const { id, ...rest } = category;
-    return client.put<{ data: Category }>(`/categories/${id}`, rest, config);
+    return client.put<Category>(`/categories/${id}`, rest, config);
   }
 }
 

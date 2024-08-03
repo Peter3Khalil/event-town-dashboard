@@ -19,7 +19,7 @@ import {
 } from '@/lib/refineEventSchema';
 import { cn } from '@/lib/utils';
 import EventsApi from '@/services/EventsApi';
-import { NewEventType } from '@/types/event.types';
+import { Event } from '@/types/event.types';
 import { FormInput, ValidationError } from '@/types/global.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
@@ -79,7 +79,7 @@ const CreateEvent = () => {
   });
 
   function onSubmit(values: z.infer<typeof CREATE_EVENT_SCHEMA>) {
-    mutate({ ...values, eventImage: image } as unknown as NewEventType);
+    mutate({ ...values, eventImage: image } as unknown as Event);
   }
 
   const formInputs: MyFormInput[] = useMemo(

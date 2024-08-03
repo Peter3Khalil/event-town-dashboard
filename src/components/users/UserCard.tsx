@@ -24,7 +24,7 @@ type UserCardProps = {
 };
 
 const UserCard: FC<UserCardProps> = ({ user }) => {
-  const image = user?.profileImg || '/defaultUser.jpg';
+  const image = (user?.profileImg as string) || '/defaultUser.jpg';
   return (
     <Card className="w-full lg:w-[800px]">
       <CardHeader>

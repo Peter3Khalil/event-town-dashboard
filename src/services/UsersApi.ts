@@ -1,5 +1,6 @@
 import client from '@/lib/client';
 import { toFormData } from '@/lib/utils';
+import { APIInterface } from '@/services/APIInterface';
 import { GetAllQueryParams } from '@/types/global.types';
 import {
   GetAllUsersResponse,
@@ -9,11 +10,10 @@ import {
 } from '@/types/users.types';
 import { AxiosRequestConfig } from 'axios';
 
-class UsersApi {
+class UsersApi implements APIInterface<User> {
   private static instance: UsersApi;
 
   private constructor() {}
-
   public static getInstance(): UsersApi {
     if (!UsersApi.instance) {
       UsersApi.instance = new UsersApi();
@@ -40,19 +40,19 @@ class UsersApi {
     return client.get<Omit<LoginResponse, 'token'>>('/users/getMe', config);
   }
 
-  public create(user: NewUserType, config?: AxiosRequestConfig) {
+  public create(user: User, config?: AxiosRequestConfig) {
     const formData = toFormData(user);
     return client.post<{ data: User }>('/users', formData, config);
   }
 
-  public updateUser(
+  public update(
     updatedUser: {
       id: string;
-      user: Partial<User>;
+      data: Partial<User>;
     },
     config?: AxiosRequestConfig,
   ) {
-    const { user } = updatedUser;
+    const { data: user } = updatedUser;
     const formData = toFormData(user);
     return client.put<User>(`/users/${updatedUser.id}`, formData, config);
   }

@@ -83,7 +83,7 @@ const UpdateOrganizer: FC<UpdateOrganizerProps> = ({ params: { id } }) => {
   });
 
   function onSubmit(values: z.infer<typeof UPDATE_ORGANIZER_SCHEMA>) {
-    mutate({ id, organizer: values });
+    mutate({ id, data: values });
   }
 
   const formInputs: MyFormInput[] = useMemo(

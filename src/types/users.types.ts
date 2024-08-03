@@ -25,7 +25,7 @@ export type User = {
   active?: boolean;
   wishlist: unknown[];
   calendar: unknown[];
-  profileImg?: string;
+  profileImg?: string | File | null;
   token?: string;
 };
 
@@ -39,6 +39,5 @@ export type NewUserType = Pick<
   'name' | 'email' | 'password' | 'location' | 'gender' | 'role' | 'phone'
 > & {
   interests?: string[];
-  profileImg?: File | null;
   confirmPassword: string;
 };

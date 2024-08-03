@@ -1,9 +1,10 @@
 import client from '@/lib/client';
+import { APIInterface } from '@/services/APIInterface';
 import { GetAllQueryParams } from '@/types/global.types';
 import { GetAllOrganizersResponse, Organizer } from '@/types/organizer.types';
 import { AxiosRequestConfig } from 'axios';
 
-class OrganizersApi {
+class OrganizersApi implements APIInterface<Organizer> {
   private static instance: OrganizersApi;
 
   private constructor() {}
@@ -38,10 +39,10 @@ class OrganizersApi {
   }
 
   public update(
-    updatedOrganizer: { id: string; organizer: Partial<Organizer> },
+    updatedOrganizer: { id: string; data: Partial<Organizer> },
     config?: AxiosRequestConfig,
   ) {
-    const { id, organizer } = updatedOrganizer;
+    const { id, data: organizer } = updatedOrganizer;
 
     return client.put<Organizer>(`/organizers/${id}`, organizer, config);
   }
