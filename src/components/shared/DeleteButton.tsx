@@ -36,6 +36,18 @@ const DeleteButton = <TData extends { _id: string }>({
     mutate(model._id);
   }, [model._id, mutate]);
 
+  if (typeof children !== 'string')
+    return (
+      <Button
+        onClick={handleDelete}
+        variant={'destructive'}
+        disabled={isLoading}
+        {...props}
+      >
+        {children}
+      </Button>
+    );
+
   return (
     <Button
       onClick={handleDelete}

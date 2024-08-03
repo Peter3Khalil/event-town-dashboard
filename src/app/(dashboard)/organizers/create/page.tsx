@@ -84,6 +84,7 @@ const CreateOrganizer = () => {
       {
         name: 'organizationPhoneNumber',
         label: 'Organization Phone',
+        type: 'tel',
         placeholder: 'Enter Organization Phone',
       },
       {

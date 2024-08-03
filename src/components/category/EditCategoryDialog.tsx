@@ -31,7 +31,9 @@ const EditCategoryDialog: FC<EditCategoryDialogProps> = ({ category }) => {
     onSuccess(data) {
       queryClient.invalidateQueries('categories');
       setOpen(false);
-      setTitle(data.data.data.title);
+      setTitle(
+        (data.data as unknown as { data: { title: string } }).data.title,
+      );
       setError('');
     },
     onError(error) {
@@ -55,7 +57,7 @@ const EditCategoryDialog: FC<EditCategoryDialogProps> = ({ category }) => {
   }, [category.title]);
 
   const handleSubmit = () => {
-    mutate({ title: title, id: category._id });
+    mutate({ data: { title }, id: category._id });
   };
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
