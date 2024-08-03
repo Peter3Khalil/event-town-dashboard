@@ -126,24 +126,17 @@ const UserForm = <T extends FieldValues>({
                 }
                 render={({ field }) => (
                   <RadioGroup
-                    defaultValue="male"
+                    defaultValue={field.value}
+                    value={field.value}
                     className="flex"
                     onValueChange={(value) => field.onChange(value)}
                   >
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem
-                        checked={field.value === 'male'}
-                        value="male"
-                        id="r1"
-                      />
+                      <RadioGroupItem value="male" id="r1" />
                       <Label htmlFor="r1">Male</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem
-                        checked={field.value === 'female'}
-                        value="female"
-                        id="r2"
-                      />
+                      <RadioGroupItem value="female" id="r2" />
                       <Label htmlFor="r2">Female</Label>
                     </div>
                   </RadioGroup>
