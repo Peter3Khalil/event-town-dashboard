@@ -42,8 +42,11 @@ class CategoriesApi implements APIInterface<Category> {
     category: { id: string; data: Partial<Category> },
     config?: AxiosRequestConfig,
   ) {
-    const { id, ...rest } = category;
-    return client.put<Category>(`/categories/${id}`, rest, config);
+    const {
+      id,
+      data: { title },
+    } = category;
+    return client.put<Category>(`/categories/${id}`, { title }, config);
   }
 }
 
