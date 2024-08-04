@@ -46,7 +46,7 @@ const EVENT_STATUSES_BADGES: EventStatusesBadgeType = {
   },
 };
 
-const PLAN_BADGES: Record<Event['organizerPlan'], JSX.Element> = {
+export const PLAN_BADGES: Record<Event['organizerPlan'], JSX.Element> = {
   free: (
     <Badge className="capitalize" variant={'outline'}>
       <p className="text-[12px] font-normal">Free</p>

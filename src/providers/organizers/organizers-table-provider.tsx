@@ -2,10 +2,12 @@
 import CellAction from '@/components/shared/CellAction';
 import SelectAllCheckbox from '@/components/shared/SelectAllCheckbox';
 import SelectRowCheckbox from '@/components/shared/SelectRowCheckbox';
+import { Button } from '@/components/ui/button';
 import createTableContext from '@/providers/table-provider';
 import OrganizersApi from '@/services/OrganizersApi';
 import { Organizer } from '@/types/organizer.types';
 import { ColumnDef } from '@tanstack/react-table';
+import Link from 'next/link';
 
 const {
   TableProvider: OrganizersTableProvider,
@@ -29,7 +31,13 @@ const COLUMNS: ColumnDef<Organizer>[] = [
     id: 'organizer',
     accessorKey: 'organizerName',
     header: 'Organizer Name',
-    cell: ({ row }) => row.original.organizerName,
+    cell: ({ row }) => (
+      <Button variant="link" asChild>
+        <Link href={`/organizers/${row.original._id}`}>
+          {row.original.organizerName}
+        </Link>
+      </Button>
+    ),
   },
   {
     id: 'organization',

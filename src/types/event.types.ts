@@ -27,7 +27,7 @@ export type Event = {
   createdAt: string;
   updatedAt: string;
   __v: number;
-  expirePlanDate: string;
+  expirePlanDate?: string;
   comments: string[];
   id: string;
 };

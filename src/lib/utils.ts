@@ -5,7 +5,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const formatDateTime = (date: string) => {
+export const formatDateTime = (date: string | Date) => {
+  if (!isValidDate) return 'Invalid Date';
   return new Date(date).toLocaleString();
 };
 
