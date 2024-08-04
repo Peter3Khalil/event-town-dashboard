@@ -5,10 +5,12 @@ import {
   PageHeader,
   PageTitle,
 } from '@/components/layouts/PageLayout';
+import CardSkeleton from '@/components/shared/CardSkeleton';
 import { EditIcon } from '@/components/shared/Icons';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
 import useCustomQuery from '@/hooks/useCustomQuery';
 import usePageTitle from '@/hooks/usePageTitle';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
@@ -26,7 +28,7 @@ type EventDetailsProps = {
 
 const EventDetails: FC<EventDetailsProps> = ({ params: { id } }) => {
   useSetBreadcrumb({ breadcrumbPath: '/dashboard/events/Event Details' });
-  const { data, isError } = useCustomQuery(
+  const { data, isError, isLoading } = useCustomQuery(
     ['eventDetails', id],
     () => EventsApi.getOne(id),
     {
@@ -37,7 +39,19 @@ const EventDetails: FC<EventDetailsProps> = ({ params: { id } }) => {
   usePageTitle(event?.eventName || 'Event Details');
 
   if (isError) notFound();
-  if (!event) return null;
+  if (!event || isLoading)
+    return (
+      <PageContent>
+        <Skeleton className="h-8 w-52 shrink-0" />
+        <ScrollArea>
+          <FormLayout className="mt-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <CardSkeleton key={i} />
+            ))}
+          </FormLayout>
+        </ScrollArea>
+      </PageContent>
+    );
   return (
     <PageContent>
       <PageHeader>
@@ -79,21 +93,23 @@ const EventDetails: FC<EventDetailsProps> = ({ params: { id } }) => {
                   {formatDate(event.createdAt, 'YYYY-mm-dd')}
                 </p>
               </InfoContainer>
-              <div className="flex flex-col gap-2 md:flex-row">
-                <Key>Categories:</Key>
-                <ul className="flex flex-wrap gap-2">
-                  {event.eventCategory.map((category, i) => (
-                    <li key={i}>
-                      <Badge
-                        variant={'secondary'}
-                        className="text-xs font-normal"
-                      >
-                        {category.title}
-                      </Badge>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {event.eventCategory.length > 0 && (
+                <div className="flex flex-col gap-2 md:flex-row">
+                  <Key>Categories:</Key>
+                  <ul className="flex flex-wrap gap-2">
+                    {event.eventCategory.map((category, i) => (
+                      <li key={i}>
+                        <Badge
+                          variant={'secondary'}
+                          className="text-xs font-normal"
+                        >
+                          {category.title}
+                        </Badge>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </CardContent>
           </Card>
           <Card>
