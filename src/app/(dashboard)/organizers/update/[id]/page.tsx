@@ -23,7 +23,7 @@ import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { FC, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation } from 'react-query';
 import { z } from 'zod';
 type MyFormInput = FormInput & {
   name: keyof z.infer<typeof ORGANIZER_SCHEMA>;
@@ -40,7 +40,6 @@ const UpdateOrganizer: FC<UpdateOrganizerProps> = ({ params: { id } }) => {
   useSetBreadcrumb({
     breadcrumbPath: '/dashboard/organizers/update organizer',
   });
-  const queryClient = useQueryClient();
   const router = useRouter();
   const form = useForm<z.infer<typeof UPDATE_ORGANIZER_SCHEMA>>({
     resolver: zodResolver(UPDATE_ORGANIZER_SCHEMA),
@@ -62,7 +61,6 @@ const UpdateOrganizer: FC<UpdateOrganizerProps> = ({ params: { id } }) => {
 
   const { mutate, isLoading } = useMutation(OrganizersApi.update, {
     onSuccess() {
-      queryClient.invalidateQueries('organizers');
       router.push(`/organizers/${id}`);
     },
     onError(err) {

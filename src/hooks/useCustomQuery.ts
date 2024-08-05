@@ -22,7 +22,7 @@ const useCustomQuery = <TData = unknown, TError = unknown>(
   const queryClient = useQueryClient();
   const queryResult = useQuery<TData, TError>(queryKey, queryFn, {
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
     retry: false,
     keepPreviousData: true,
     ...options,

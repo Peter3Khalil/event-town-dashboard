@@ -30,7 +30,7 @@ import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation } from 'react-query';
 import { z } from 'zod';
 
 const DEFAULT_VALUES: z.infer<typeof EVENT_SCHEMA> = {
@@ -76,7 +76,6 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
   useSetBreadcrumb({
     breadcrumbPath: '/dashboard/events/Update',
   });
-  const queryClient = useQueryClient();
   const router = useRouter();
   const [image, setImage] = useState<File | null | string>(null);
   const form = useForm<z.infer<typeof UPDATE_EVENT_SCHEMA>>({
@@ -99,7 +98,6 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
 
   const { mutate, isLoading } = useMutation(EventsApi.update, {
     onSuccess() {
-      queryClient.invalidateQueries('events');
       router.push(`/events/${id}`);
     },
     onError(err) {

@@ -27,7 +27,7 @@ import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation } from 'react-query';
 import { z } from 'zod';
 
 const CREATE_EVENT_SCHEMA = EVENT_SCHEMA.refine(isStartTimeSmallerThanEndTime, {
@@ -46,7 +46,6 @@ const CreateEvent = () => {
   useSetBreadcrumb({
     breadcrumbPath: '/dashboard/Events/Create',
   });
-  const queryClient = useQueryClient();
   const router = useRouter();
   const [image, setImage] = useState<File | null | string>(null);
   const form = useForm<z.infer<typeof CREATE_EVENT_SCHEMA>>({
@@ -59,7 +58,6 @@ const CreateEvent = () => {
 
   const { mutate, isLoading } = useMutation(EventsApi.create, {
     onSuccess(data) {
-      queryClient.invalidateQueries('events');
       router.push(`/events/${data.data.data._id}`);
     },
     onError(err) {

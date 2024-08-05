@@ -23,7 +23,7 @@ import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation } from 'react-query';
 import { z } from 'zod';
 
 const CREATE_USER_SCHEMA = USER_SCHEMA.refine(
@@ -38,7 +38,6 @@ const CreateUser = () => {
   useSetBreadcrumb({
     breadcrumbPath: '/dashboard/users/Create',
   });
-  const queryClient = useQueryClient();
   const router = useRouter();
   const [profileImg, setProfileImg] = useState<File | null>(null);
   const form = useForm<z.infer<typeof CREATE_USER_SCHEMA>>({
@@ -51,7 +50,6 @@ const CreateUser = () => {
 
   const { mutate, isLoading } = useMutation(UsersApi.create, {
     onSuccess(data) {
-      queryClient.invalidateQueries('users');
       router.push(`/users/${data.data.data._id}`);
     },
     onError(err) {
