@@ -116,7 +116,7 @@ const COLUMNS: ColumnDef<Event>[] = [
     }) => (
       <p>
         <span className="font-semibold">{eventPrice}</span>
-        <span className="ml-1 text-[0.8em] italic">EGP</span>
+        <span className="ml-1 text-[0.8em] italic">$</span>
       </p>
     ),
   },

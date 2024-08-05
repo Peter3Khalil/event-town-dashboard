@@ -122,6 +122,7 @@ const UpdateOrganizer: FC<UpdateOrganizerProps> = ({ params: { id } }) => {
       {
         name: 'advice',
         label: 'Advice',
+        type: 'textarea',
         placeholder: 'Enter Advice',
       },
     ],

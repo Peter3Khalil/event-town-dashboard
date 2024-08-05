@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import ImageUploaderSkeleton from '@/components/ui/ImageUploaderSkeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { EVENT_SCHEMA } from '@/constants/formSchemas';
+import { withCategoriesProvider } from '@/HOC/data-providers';
 import useCustomQuery from '@/hooks/useCustomQuery';
 import usePageTitle from '@/hooks/usePageTitle';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
@@ -340,4 +341,4 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
   );
 };
 
-export default UpdateEvent;
+export default withCategoriesProvider(UpdateEvent);

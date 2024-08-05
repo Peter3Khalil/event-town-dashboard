@@ -8,6 +8,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { FormInput } from '@/types/global.types';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
@@ -40,7 +41,15 @@ const OrganizerForm = <T extends FieldValues>({
                 <FormItem>
                   <FormLabel className="capitalize">{input.label}</FormLabel>
                   <FormControl>
-                    <Input {...input} {...field} />
+                    {input.type === 'textarea' ? (
+                      <Textarea
+                        placeholder="Tell us a little bit about yourself"
+                        className="resize-none"
+                        {...field}
+                      />
+                    ) : (
+                      <Input {...input} {...field} />
+                    )}
                   </FormControl>
                   <FormMessage />
                 </FormItem>

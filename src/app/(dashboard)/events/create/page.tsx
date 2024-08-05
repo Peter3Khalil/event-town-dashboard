@@ -11,6 +11,7 @@ import MyTooltip from '@/components/shared/MyTooltip';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { EVENT_SCHEMA } from '@/constants/formSchemas';
+import { withCategoriesProvider } from '@/HOC/data-providers';
 import usePageTitle from '@/hooks/usePageTitle';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import {
@@ -218,4 +219,4 @@ const CreateEvent = () => {
   );
 };
 
-export default CreateEvent;
+export default withCategoriesProvider(CreateEvent);

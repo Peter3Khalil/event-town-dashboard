@@ -105,6 +105,7 @@ const CreateOrganizer = () => {
       {
         name: 'advice',
         label: 'Advice',
+        type: 'textarea',
         placeholder: 'Enter Advice',
       },
     ],

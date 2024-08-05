@@ -24,12 +24,6 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import {
-  CategoriesProvider,
-  useCategories,
-} from '@/providers/categories/categories-provider';
-import { FormInput } from '@/types/global.types';
 import {
   Select,
   SelectContent,
@@ -38,8 +32,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 import { Capitalize, cn, formatDate } from '@/lib/utils';
+import { useCategories } from '@/providers/categories/categories-provider';
 import { Event } from '@/types/event.types';
+import { FormInput } from '@/types/global.types';
 import { useMemo } from 'react';
 
 type EventFormProps<T extends FieldValues> =
@@ -234,12 +231,4 @@ const EventForm = <T extends FieldValues>({
   );
 };
 
-const Wrapper = <T extends FieldValues>(props: EventFormProps<T>) => {
-  return (
-    <CategoriesProvider>
-      <EventForm {...props} />
-    </CategoriesProvider>
-  );
-};
-
-export default Wrapper;
+export default EventForm;
