@@ -36,7 +36,6 @@ const ProfileMenu: FC<ProfileMenuProps> = ({ className, ...props }) => {
       <DropdownMenuContent className={cn('mx-2', className)} {...props}>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
         <DropdownMenuItem>
           <ThemeChanger />
         </DropdownMenuItem>
