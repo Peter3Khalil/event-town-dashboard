@@ -50,7 +50,7 @@ const CreateEvent = () => {
   const [image, setImage] = useState<File | null | string>(null);
   const form = useForm<z.infer<typeof CREATE_EVENT_SCHEMA>>({
     resolver: zodResolver(CREATE_EVENT_SCHEMA),
-    mode: 'onChange',
+    mode: 'onSubmit',
   });
   const {
     formState: { isValid },
@@ -200,7 +200,7 @@ const CreateEvent = () => {
             e.preventDefault();
             form.handleSubmit(onSubmit)();
           }}
-          disabled={!isValid || isLoading}
+          disabled={isLoading}
         >
           {isLoading ? 'Creating...' : 'Create'}
         </Button>

@@ -44,10 +44,10 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
   const [profileImg, setProfileImg] = useState<File | null | string>(null);
   const form = useForm<z.infer<typeof UPDATE_USER_SCHEMA>>({
     resolver: zodResolver(UPDATE_USER_SCHEMA),
-    mode: 'onChange',
+    mode: 'onSubmit',
   });
   const {
-    formState: { isValid, errors },
+    formState: { isValid },
   } = form;
 
   const { data, isLoading: isLoadingUser } = useCustomQuery(
@@ -155,7 +155,7 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
         <div>
           <div className="flex items-center gap-2">
             <PageTitle>Update User</PageTitle>
-            {Object.keys(errors).length > 0 && (
+            {!isValid && (
               <MyTooltip
                 className="bg-destructive"
                 content={
@@ -176,7 +176,7 @@ const UpdateUser: FC<UpdateUserProps> = ({ params: { id } }) => {
             e.preventDefault();
             form.handleSubmit(onSubmit)();
           }}
-          disabled={!isValid || isLoading}
+          disabled={isLoading}
         >
           {isLoading ? 'Updating...' : 'Update'}
         </Button>

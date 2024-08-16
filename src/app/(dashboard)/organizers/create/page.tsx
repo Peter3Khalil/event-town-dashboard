@@ -35,7 +35,7 @@ const CreateOrganizer = () => {
   const router = useRouter();
   const form = useForm<z.infer<typeof ORGANIZER_SCHEMA>>({
     resolver: zodResolver(ORGANIZER_SCHEMA),
-    mode: 'onChange',
+    mode: 'onSubmit',
   });
   const {
     formState: { isValid },
@@ -140,7 +140,7 @@ const CreateOrganizer = () => {
           type="button"
           className="mt-6"
           onClick={form.handleSubmit(onSubmit)}
-          disabled={!isValid || isLoading}
+          disabled={isLoading}
         >
           {isLoading ? 'Creating...' : 'Create'}
         </Button>

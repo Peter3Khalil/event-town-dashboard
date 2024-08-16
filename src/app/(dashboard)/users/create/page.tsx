@@ -9,6 +9,7 @@ import { AlertIcon } from '@/components/shared/Icons';
 import MyTooltip from '@/components/shared/MyTooltip';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useToast } from '@/components/ui/use-toast';
 import UserForm from '@/components/users/UserForm';
 import { USER_SCHEMA } from '@/constants/formSchemas';
 import { withCategoriesProvider } from '@/HOC/data-providers';
@@ -16,7 +17,7 @@ import usePageTitle from '@/hooks/usePageTitle';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { cn } from '@/lib/utils';
 import UsersApi from '@/services/UsersApi';
-import { FormInput, ValidationError } from '@/types/global.types';
+import { FormInput, ResponseError, ValidationError } from '@/types/global.types';
 import { User } from '@/types/users.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
@@ -35,6 +36,7 @@ const CREATE_USER_SCHEMA = USER_SCHEMA.refine(
 );
 
 const CreateUser = () => {
+  const {toast} = useToast();
   useSetBreadcrumb({
     breadcrumbPath: '/dashboard/users/Create',
   });
@@ -42,10 +44,10 @@ const CreateUser = () => {
   const [profileImg, setProfileImg] = useState<File | null>(null);
   const form = useForm<z.infer<typeof CREATE_USER_SCHEMA>>({
     resolver: zodResolver(CREATE_USER_SCHEMA),
-    mode: 'onChange',
+    mode: 'onSubmit',
   });
   const {
-    formState: { isValid, errors },
+    formState: { isValid },
   } = form;
 
   const { mutate, isLoading } = useMutation(UsersApi.create, {
@@ -65,6 +67,14 @@ const CreateUser = () => {
             },
           );
         });
+      }
+      else {
+        const error = err as AxiosError<ResponseError>
+        toast({
+          title:"Error",
+          description: error.response?.data.message || "An error occurred",
+          variant: "destructive"
+        })
       }
     },
   });
@@ -130,7 +140,7 @@ const CreateUser = () => {
         <div>
           <div className="flex items-center gap-2">
             <PageTitle>Create User</PageTitle>
-            {Object.keys(errors).length > 0 && (
+            {!isValid && (
               <MyTooltip
                 className="bg-destructive"
                 content={
@@ -151,7 +161,7 @@ const CreateUser = () => {
             e.preventDefault();
             form.handleSubmit(onSubmit)();
           }}
-          disabled={!isValid || isLoading}
+          disabled={isLoading}
         >
           {isLoading ? 'Creating...' : 'Create'}
         </Button>

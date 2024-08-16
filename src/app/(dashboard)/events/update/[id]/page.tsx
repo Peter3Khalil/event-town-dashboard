@@ -80,10 +80,10 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
   const [image, setImage] = useState<File | null | string>(null);
   const form = useForm<z.infer<typeof UPDATE_EVENT_SCHEMA>>({
     resolver: zodResolver(UPDATE_EVENT_SCHEMA),
-    mode: 'onChange',
+    mode: 'onSubmit',
   });
   const {
-    formState: { isValid, errors },
+    formState: { isValid },
   } = form;
 
   const { data, isLoading: isLoadingEvent } = useCustomQuery(
@@ -240,12 +240,12 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
       <Button
         type="button"
         onClick={form.handleSubmit(onSubmit)}
-        disabled={!isValid || isLoading}
+        disabled={isLoading}
       >
         {isLoading ? 'Updating...' : 'Update'}
       </Button>
     ),
-    [isValid, isLoading, form, onSubmit],
+    [isLoading, form, onSubmit],
   );
 
   const DiscardButton = useMemo(
@@ -282,7 +282,7 @@ const UpdateEvent: FC<UpdateEventProps> = ({ params: { id } }) => {
         <div>
           <div className="flex items-center gap-2">
             <PageTitle>Update Event</PageTitle>
-            {Object.keys(errors).length > 0 && (
+            {!isValid && (
               <MyTooltip
                 className="bg-destructive"
                 content={

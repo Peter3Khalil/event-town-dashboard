@@ -43,10 +43,10 @@ const UpdateOrganizer: FC<UpdateOrganizerProps> = ({ params: { id } }) => {
   const router = useRouter();
   const form = useForm<z.infer<typeof UPDATE_ORGANIZER_SCHEMA>>({
     resolver: zodResolver(UPDATE_ORGANIZER_SCHEMA),
-    mode: 'onChange',
+    mode: 'onSubmit',
   });
   const {
-    formState: { isValid, errors },
+    formState: { isValid },
   } = form;
 
   const { data, isLoading: isLoadingOrganizer } = useCustomQuery(
@@ -146,7 +146,7 @@ const UpdateOrganizer: FC<UpdateOrganizerProps> = ({ params: { id } }) => {
         <div>
           <div className="flex items-center gap-2">
             <PageTitle>Update Organizer</PageTitle>
-            {Object.keys(errors).length > 0 && (
+            {!isValid && (
               <MyTooltip
                 className="bg-destructive"
                 content={
@@ -165,7 +165,7 @@ const UpdateOrganizer: FC<UpdateOrganizerProps> = ({ params: { id } }) => {
           type="button"
           className="mt-6"
           onClick={form.handleSubmit(onSubmit)}
-          disabled={!isValid || isLoading}
+          disabled={isLoading}
         >
           {isLoading ? 'Updating...' : 'Update'}
         </Button>
