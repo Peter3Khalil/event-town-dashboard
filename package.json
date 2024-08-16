@@ -32,6 +32,7 @@
     "@radix-ui/react-toast": "^1.2.0",
     "@radix-ui/react-tooltip": "^1.0.7",
     "@tanstack/react-table": "^8.17.3",
+    "admin-dashboard": "file:",
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
