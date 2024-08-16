@@ -1,13 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  images:{
-    remotePatterns:[{hostname:"event-town-api.onrender.com"},{
-      hostname:"picsum.photos"
-    },{
-      hostname:"example.com"
-    }]
-  }
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+  },
 };
 
 export default nextConfig;
