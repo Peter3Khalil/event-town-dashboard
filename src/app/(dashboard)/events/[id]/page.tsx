@@ -17,6 +17,7 @@ import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { formatDate, formatDateTime } from '@/lib/utils';
 import { PLAN_BADGES } from '@/providers/events/events-table-provider';
 import EventsApi from '@/services/EventsApi';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
@@ -63,6 +64,16 @@ const EventDetails: FC<EventDetailsProps> = ({ params: { id } }) => {
         </div>
       </PageHeader>
       <ScrollArea>
+        {event.eventImage && (
+          <div className="relative mb-10 h-64 w-full rounded-lg md:mx-auto md:w-[80%] lg:w-[70%]">
+            <Image
+              src={event.eventImage}
+              fill
+              alt={event.eventName}
+              className="absolute h-full w-full rounded-lg object-contain object-center"
+            />
+          </div>
+        )}
         <FormLayout className="mt-3">
           <Card>
             <CardHeader>
