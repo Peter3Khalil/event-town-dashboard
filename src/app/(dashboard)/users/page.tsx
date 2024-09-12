@@ -16,6 +16,7 @@ import { withUsersTableProvider } from '@/HOC/table-providers';
 import usePageTitle from '@/hooks/usePageTitle';
 import useRefetch from '@/hooks/useRefetch';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
+import { pipe } from '@/lib/utils';
 import { useUsers } from '@/providers/users/users-provider';
 import { useUsersTable } from '@/providers/users/users-table-provider';
 
@@ -83,4 +84,4 @@ const Users = () => {
   );
 };
 
-export default withUsersProvider(withUsersTableProvider(Users));
+export default pipe(withUsersTableProvider, withUsersProvider)(Users);

@@ -16,6 +16,7 @@ import { withEventsTableProvider } from '@/HOC/table-providers';
 import usePageTitle from '@/hooks/usePageTitle';
 import useRefetch from '@/hooks/useRefetch';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
+import { pipe } from '@/lib/utils';
 import { useEvents } from '@/providers/events/events-provider';
 import { useEventsTable } from '@/providers/events/events-table-provider';
 
@@ -81,4 +82,4 @@ const Events = () => {
   );
 };
 
-export default withEventsProvider(withEventsTableProvider(Events));
+export default pipe(withEventsTableProvider, withEventsProvider)(Events);

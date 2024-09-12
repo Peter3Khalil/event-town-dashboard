@@ -16,6 +16,7 @@ import { withOrganizersTableProvider } from '@/HOC/table-providers';
 import usePageTitle from '@/hooks/usePageTitle';
 import useRefetch from '@/hooks/useRefetch';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
+import { pipe } from '@/lib/utils';
 import { useOrganizers } from '@/providers/organizers/organizers-provider';
 import { useOrganizersTable } from '@/providers/organizers/organizers-table-provider';
 
@@ -86,4 +87,7 @@ const Organizers = () => {
   );
 };
 
-export default withOrganizersProvider(withOrganizersTableProvider(Organizers));
+export default pipe(
+  withOrganizersTableProvider,
+  withOrganizersProvider,
+)(Organizers);

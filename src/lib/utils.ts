@@ -128,3 +128,12 @@ export const toFormData = (obj: Record<string, any>): FormData => {
 
   return formData;
 };
+
+export const pipe = <T, U>(
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
+  ...fns: [(arg: T) => U, ...Array<(arg: any) => any>]
+) => {
+  return (initialValue: T): ReturnType<(typeof fns)[number]> => {
+    return fns.reduce((acc, fn) => fn(acc), initialValue);
+  };
+};

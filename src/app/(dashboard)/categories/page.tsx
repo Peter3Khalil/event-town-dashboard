@@ -14,6 +14,7 @@ import { withCategoriesProvider } from '@/HOC/data-providers';
 import { withCategoriesTableProvider } from '@/HOC/table-providers';
 import useRefetch from '@/hooks/useRefetch';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
+import { pipe } from '@/lib/utils';
 import { useCategories } from '@/providers/categories/categories-provider';
 import { useCategoriesTable } from '@/providers/categories/categories-table-provider';
 
@@ -78,4 +79,7 @@ const Categories = () => {
   );
 };
 
-export default withCategoriesProvider(withCategoriesTableProvider(Categories));
+export default pipe(
+  withCategoriesTableProvider,
+  withCategoriesProvider,
+)(Categories);

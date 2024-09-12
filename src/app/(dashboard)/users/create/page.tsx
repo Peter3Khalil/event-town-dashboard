@@ -17,7 +17,11 @@ import usePageTitle from '@/hooks/usePageTitle';
 import useSetBreadcrumb from '@/hooks/useSetBreadcrumb';
 import { cn } from '@/lib/utils';
 import UsersApi from '@/services/UsersApi';
-import { FormInput, ResponseError, ValidationError } from '@/types/global.types';
+import {
+  FormInput,
+  ResponseError,
+  ValidationError,
+} from '@/types/global.types';
 import { User } from '@/types/users.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
@@ -36,7 +40,7 @@ const CREATE_USER_SCHEMA = USER_SCHEMA.refine(
 );
 
 const CreateUser = () => {
-  const {toast} = useToast();
+  const { toast } = useToast();
   useSetBreadcrumb({
     breadcrumbPath: '/dashboard/users/Create',
   });
@@ -67,14 +71,13 @@ const CreateUser = () => {
             },
           );
         });
-      }
-      else {
-        const error = err as AxiosError<ResponseError>
+      } else {
+        const error = err as AxiosError<ResponseError>;
         toast({
-          title:"Error",
-          description: error.response?.data.message || "An error occurred",
-          variant: "destructive"
-        })
+          title: 'Error',
+          description: error.response?.data.message || 'An error occurred',
+          variant: 'destructive',
+        });
       }
     },
   });
