@@ -131,7 +131,7 @@ function Login() {
                 {isLoading ? 'Loading....' : 'Login'}
               </Button>
 
-              <p className="text-xs">
+              <p className="text-xs text-muted-foreground">
                 <b>Note:</b> The request can take a few seconds to complete at
                 the first time. Please be patient.
               </p>
