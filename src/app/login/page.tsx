@@ -88,49 +88,64 @@ function Login() {
   }, []);
 
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle className="font-bold">Login</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account.
-        </CardDescription>
-        {serverError && (
-          <CardDescription className="text-destructive">
-            {serverError}
+    <div className="flex flex-col gap-4">
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle className="font-bold">Login</CardTitle>
+          <CardDescription>
+            Enter your email below to login to your account.
           </CardDescription>
-        )}
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
-            {formInputs.map((input) => (
-              <FormField
-                key={input.name}
-                control={form.control}
-                name={input.name}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="capitalize">{input.label}</FormLabel>
-                    <FormControl>
-                      <Input {...input} {...field} />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-            ))}
+          {serverError && (
+            <CardDescription className="text-destructive">
+              {serverError}
+            </CardDescription>
+          )}
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
+              {formInputs.map((input) => (
+                <FormField
+                  key={input.name}
+                  control={form.control}
+                  name={input.name}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="capitalize">
+                        {input.label}
+                      </FormLabel>
+                      <FormControl>
+                        <Input {...input} {...field} />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              ))}
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading || !isValid}
-            >
-              {isLoading ? 'Loading....' : 'Login'}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isLoading || !isValid}
+              >
+                {isLoading ? 'Loading....' : 'Login'}
+              </Button>
+
+              <p className="text-xs">
+                <b>Note:</b> The request can take a few seconds to complete at
+                the first time. Please be patient.
+              </p>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+      <p className="text-xs">
+        Credentials: <br />
+        Email: <b>businessinfo7090@gmail.com</b>
+        <br />
+        Password: <b>123456789</b>
+      </p>
+    </div>
   );
 }
 
